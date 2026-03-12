@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base resets ─────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-family: 'Space Mono', monospace;
+    background-color: #080b10;
+    color: #c8d4e0;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100vh;
+  }
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #1a2535 transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #1a2535;
+    border-radius: 999px;
+  }
+}
+
+/* ── Price bar thumb glow ────────────────────────────────────────────────── */
+.price-fill::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: white;
+  border-radius: 999px;
+  box-shadow: 0 0 6px rgba(255,255,255,0.8);
+}
