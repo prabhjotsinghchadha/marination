@@ -8,7 +8,6 @@ import {
     Tooltip,
     ReferenceLine,
     ResponsiveContainer,
-    TooltipProps,
 } from "recharts";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { fmtPct } from "@/libs/formatters";
@@ -20,9 +19,15 @@ interface ChartDataPoint {
     yesPrice: number;
 }
 
-function CustomTooltip({ active, payload }: TooltipProps<number, string>) {
-    if (!active || !payload?.length) return null;
-    const d = payload[0].payload as ChartDataPoint;
+interface CustomTooltipProps {
+    active?: boolean;
+    payload?: { payload: ChartDataPoint }[];
+}
+
+function CustomTooltip({ active, payload }: CustomTooltipProps) {
+    const first = payload?.[0];
+    if (!active || !first) return null;
+    const d = first.payload as ChartDataPoint;
     return (
         <div className="bg-surface border border-border rounded-lg px-3 py-2 text-[11px]">
             <div className="font-bold text-yes">YES: {fmtPct(d.yesPrice)}</div>

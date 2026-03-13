@@ -41,7 +41,8 @@ function MultiLineChart(props: { market: Market }) {
 
   if (outcomes.length === 0 || !market.priceHistory?.length) return null;
 
-  const primaryProb = outcomes[0]?.probability / 100 ?? market.yesProbability;
+  const firstOutcome = outcomes[0];
+  const primaryProb = firstOutcome ? firstOutcome.probability / 100 : market.yesProbability;
 
   const histories = outcomes.map((o, i) =>
     i === 0 ? market.priceHistory : deriveHistory(market.priceHistory, o.probability / 100, primaryProb, i),
