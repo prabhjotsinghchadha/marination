@@ -217,10 +217,11 @@ export function sellQuote(market: Market, side: Side, shares: number): SellQuote
 
 // ─── TRADING ─────────────────────────────────────────────────────────────────
 
-function upsertPosition(market: Market, user: string): void {
+function upsertPosition(market: Market, user: string): Position {
   if (!market.positions[user]) {
     market.positions[user] = { YES: 0, NO: 0, spent: 0, received: 0 };
   }
+  return market.positions[user];
 }
 
 /**
@@ -257,9 +258,9 @@ export function buy(
     market.noPool = market.k / market.yesPool;
   }
 
-  upsertPosition(market, user);
-  market.positions[user][side] += tokensOut;
-  market.positions[user].spent += amount;
+  const pos = upsertPosition(market, user);
+  pos[side] += tokensOut;
+  pos.spent += amount;
   market.clock++;
 
   market.trades.push({
