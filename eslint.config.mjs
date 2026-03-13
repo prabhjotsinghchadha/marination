@@ -17,10 +17,8 @@ export default antfu(
     lessOpinionated: true,
     isInEditor: false,
 
-    // Code style
-    stylistic: {
-      semi: true,
-    },
+    // Code style (disable most stylistic rules; keep only essential lints)
+    stylistic: false,
 
     // Format settings
     formatters: {
