@@ -1,4 +1,5 @@
 import { useId } from "react";
+import { DS } from "@/product/design-system/colors";
 
 interface MiniChartProps {
   data: number[];
@@ -8,7 +9,7 @@ interface MiniChartProps {
 }
 
 export function MiniChart(props: MiniChartProps) {
-  const { data, color = "#60a5fa", width = 100, height = 28 } = props;
+  const { data, color = DS.accentPrimary, width = 100, height = 28 } = props;
   const uid = useId();
   const gradId = `mc${uid.replace(/:/g, "")}`;
 

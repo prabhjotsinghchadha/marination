@@ -1,17 +1,18 @@
 import type { Market } from "@/product/sections/market-discovery/types";
+import { DS } from "@/product/design-system/colors";
 import { MiniChart } from "./MiniChart";
 
 const COLORS = {
-  yesText: "#6ee7b7",
-  yesBg: "#0a2e1c",
-  yesHover: "#0f3d24",
-  noText: "#f4a4a4",
-  noBg: "#2d0a0a",
-  noHover: "#3d1010",
-  cardBg: "#161621",
-  cardHover: "#1b1b27",
-  border: "#1e1e2a",
-  borderHover: "#272736",
+  yesText: DS.success,
+  yesBg: DS.successBg,
+  yesHover: DS.successBg,
+  noText: DS.error,
+  noBg: DS.dangerBg,
+  noHover: DS.dangerBg,
+  cardBg: DS.bgDark,
+  cardHover: DS.bgDarkGray,
+  border: DS.bgSurface,
+  borderHover: DS.accentGray,
 } as const;
 
 function formatVolume(v: number): string {
@@ -40,7 +41,7 @@ export function BinaryCard(props: BinaryCardProps) {
 
   const yesPercent = Math.round(market.yesProbability * 100);
   const noPercent = 100 - yesPercent;
-  const chartColor = market.yesProbability >= 0.5 ? "#34d399" : "#e07878";
+  const chartColor = market.yesProbability >= 0.5 ? DS.success : DS.error;
 
   return (
     <article
@@ -67,11 +68,11 @@ export function BinaryCard(props: BinaryCardProps) {
           <div className="shrink-0 text-right">
             <div
               className="text-[20px] font-extrabold leading-none tabular-nums"
-              style={{ color: "#fff", fontFamily: "JetBrains Mono, monospace" }}
+              style={{ color: DS.textPrimary, fontFamily: "JetBrains Mono, monospace" }}
             >
               {yesPercent}%
             </div>
-            <div className="text-[9px] mt-0.5 font-medium tracking-wide" style={{ color: "#6b7280" }}>
+            <div className="text-[9px] mt-0.5 font-medium tracking-wide" style={{ color: DS.accentGray }}>
               chance
             </div>
           </div>
@@ -115,19 +116,19 @@ export function BinaryCard(props: BinaryCardProps) {
         </button>
       </div>
 
-      <div className="flex items-center gap-2 pt-1.5 border-t" style={{ borderColor: "#17172280" }}>
+      <div className="flex items-center gap-2 pt-1.5 border-t" style={{ borderColor: `${DS.bgDarkGray}80` }}>
         <span
           className="text-[10px] tabular-nums"
-          style={{ color: "#4b5563", fontFamily: "JetBrains Mono, monospace" }}
+          style={{ color: DS.accentGray, fontFamily: "JetBrains Mono, monospace" }}
         >
           {formatVolume(market.volume)} vol
         </span>
-        <span className="text-[10px]" style={{ color: "#30303f" }}>
+        <span className="text-[10px]" style={{ color: DS.bgSurface }}>
           ·
         </span>
         <span
           className="text-[10px] tabular-nums"
-          style={{ color: "#4b5563", fontFamily: "JetBrains Mono, monospace" }}
+          style={{ color: DS.accentGray, fontFamily: "JetBrains Mono, monospace" }}
         >
           {timeUntil(market.closingDate)}
         </span>
