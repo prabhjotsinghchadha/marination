@@ -1,4 +1,5 @@
 import { LogOut } from "lucide-react";
+import { DS } from "@/product/design-system/colors";
 import type { AppShellUser } from "./AppShell";
 
 interface UserMenuProps {
@@ -25,20 +26,27 @@ export function UserMenu(props: UserMenuProps) {
         <img
           src={user.avatarUrl}
           alt={user.name}
-          className="w-8 h-8 rounded-full object-cover shrink-0 ring-2 ring-violet-200 dark:ring-violet-800"
+          className="w-8 h-8 rounded-full object-cover shrink-0 ring-2"
+          style={{ boxShadow: `0 0 0 2px ${DS.accentMedium}` }}
         />
       ) : (
-        <div className="w-8 h-8 rounded-full bg-violet-100 dark:bg-violet-900/60 flex items-center justify-center shrink-0">
+        <div
+          className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+          style={{ background: "rgba(255,174,66,0.14)" }}
+        >
           <span
-            className="text-xs font-semibold text-violet-700 dark:text-violet-300"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
+            className="text-xs font-semibold"
+            style={{ fontFamily: "Space Grotesk, sans-serif", color: DS.accentPrimary }}
           >
             {initials}
           </span>
         </div>
       )}
 
-      <span className="flex-1 text-sm font-medium text-zinc-700 dark:text-zinc-300 truncate">
+      <span
+        className="flex-1 text-sm font-medium truncate"
+        style={{ color: DS.textPrimary }}
+      >
         {user?.name ?? "Guest"}
       </span>
 
@@ -46,7 +54,8 @@ export function UserMenu(props: UserMenuProps) {
         type="button"
         onClick={onLogout}
         title="Log out"
-        className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shrink-0"
+        className="p-1.5 rounded-md transition-colors shrink-0"
+        style={{ color: DS.textSecondary }}
       >
         <LogOut size={14} />
       </button>

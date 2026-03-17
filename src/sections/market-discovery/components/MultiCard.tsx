@@ -1,16 +1,17 @@
 import type { Market } from "@/product/sections/market-discovery/types";
+import { DS } from "@/product/design-system/colors";
 
 const COLORS = {
-  yesText: "#6ee7b7",
-  yesBg: "#0a2e1c",
-  yesHover: "#0f3d24",
-  noText: "#f4a4a4",
-  noBg: "#2d0a0a",
-  noHover: "#3d1010",
-  cardBg: "#161621",
-  cardHover: "#1b1b27",
-  border: "#1e1e2a",
-  borderHover: "#272736",
+  yesText: DS.success,
+  yesBg: DS.successBg,
+  yesHover: DS.successBg,
+  noText: DS.error,
+  noBg: DS.dangerBg,
+  noHover: DS.dangerBg,
+  cardBg: DS.bgDark,
+  cardHover: DS.bgDarkGray,
+  border: DS.bgSurface,
+  borderHover: DS.accentGray,
 } as const;
 
 function formatVolume(v: number): string {
@@ -54,12 +55,12 @@ export function MultiCard(props: MultiCardProps) {
       <div className="flex flex-col gap-1">
         {outcomes.map((outcome, i) => (
           <div key={outcome.label} className="flex items-center gap-1.5">
-            <span className="flex-1 text-[11px] truncate min-w-0" style={{ color: "#9ca3af" }}>
+            <span className="flex-1 text-[11px] truncate min-w-0" style={{ color: DS.textSecondary }}>
               {outcome.label}
             </span>
             <span
               className="text-[13px] font-bold tabular-nums min-w-[34px] text-right"
-              style={{ color: "#e5e7eb", fontFamily: "JetBrains Mono, monospace" }}
+              style={{ color: DS.textPrimary, fontFamily: "JetBrains Mono, monospace" }}
             >
               {outcome.probability}%
             </span>
@@ -99,10 +100,10 @@ export function MultiCard(props: MultiCardProps) {
         ))}
       </div>
 
-      <div className="flex items-center pt-1.5 border-t" style={{ borderColor: "#17172280" }}>
+      <div className="flex items-center pt-1.5 border-t" style={{ borderColor: `${DS.bgDarkGray}80` }}>
         <span
           className="text-[10px] tabular-nums"
-          style={{ color: "#4b5563", fontFamily: "JetBrains Mono, monospace" }}
+          style={{ color: DS.accentGray, fontFamily: "JetBrains Mono, monospace" }}
         >
           {formatVolume(market.volume)} vol
         </span>

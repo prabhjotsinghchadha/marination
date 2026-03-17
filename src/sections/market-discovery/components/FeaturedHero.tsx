@@ -1,15 +1,23 @@
 import type { Market } from "@/product/sections/market-discovery/types";
+import { DS } from "@/product/design-system/colors";
 
 const COLORS = {
-  yesText: "#6ee7b7",
-  yesBg: "#0a2e1c",
-  yesHover: "#0f3d24",
-  noText: "#f4a4a4",
-  noBg: "#2d0a0a",
-  noHover: "#3d1010",
+  yesText: DS.success,
+  yesBg: DS.successBg,
+  yesHover: DS.successBg,
+  noText: DS.error,
+  noBg: DS.dangerBg,
+  noHover: DS.dangerBg,
 } as const;
 
-const OUTCOME_COLORS = ["#60a5fa", "#fbbf24", "#a78bfa", "#f472b6", "#34d399", "#fb923c"];
+const OUTCOME_COLORS = [
+  DS.accentPrimary,
+  DS.accentMedium,
+  DS.accentDarker,
+  DS.accentGray,
+  DS.success,
+  DS.accentLightGray,
+];
 
 function formatVolume(v: number): string {
   if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(1)}M`;
@@ -72,7 +80,7 @@ function MultiLineChart(props: { market: Market }) {
             y1={y}
             x2={width}
             y2={y}
-            stroke="#1e1e2e"
+            stroke={DS.bgSurface}
             strokeWidth={1}
             strokeDasharray="3,4"
           />
@@ -97,7 +105,7 @@ function MultiLineChart(props: { market: Market }) {
           key={v}
           x={width - 2}
           y={3 + ((1 - v / 100) * (height - 6)) - 3}
-          fill="#383850"
+          fill={DS.textSecondary}
           fontSize={8}
           textAnchor="end"
           fontFamily="monospace"
@@ -127,35 +135,35 @@ export function FeaturedHero(props: FeaturedHeroProps) {
       <div className="flex items-center gap-2 mb-1.5">
         <span
           className="text-[10px] font-semibold tracking-widest uppercase"
-          style={{ color: "#4b5563" }}
+          style={{ color: DS.accentGray }}
         >
           Featured market
         </span>
-        <div className="flex-1 h-px" style={{ background: "#1a1a28" }} />
+        <div className="flex-1 h-px" style={{ background: DS.bgDarkGray }} />
       </div>
 
       <div
         onClick={() => onMarketClick(market.id)}
         className="rounded-xl overflow-hidden cursor-pointer transition-all duration-200"
-        style={{ background: "#161621", border: "1px solid #1e1e2a" }}
+        style={{ background: DS.bgDark, border: `1px solid ${DS.bgSurface}` }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = "#272736";
+          e.currentTarget.style.borderColor = DS.accentGray;
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = "#1e1e2a";
+          e.currentTarget.style.borderColor = DS.bgSurface;
         }}
       >
-        <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: "#191924" }}>
+        <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: DS.bgDarkGray }}>
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center text-base shrink-0"
-            style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.2)" }}
+            style={{ background: "rgba(255,174,66,0.18)", border: `1px solid ${DS.accentDarker}` }}
           >
             {market.icon}
           </div>
           <div className="flex-1 min-w-0">
             <p
               className="text-[10px] font-medium uppercase tracking-widest mb-0.5"
-              style={{ color: "#4b5563" }}
+              style={{ color: DS.accentGray }}
             >
               {market.category}
             </p>
@@ -173,7 +181,7 @@ export function FeaturedHero(props: FeaturedHeroProps) {
                       className="w-2 h-2 rounded-full shrink-0"
                       style={{ background: OUTCOME_COLORS[i] ?? "#60a5fa" }}
                     />
-                    <span className="flex-1 text-[12px] truncate" style={{ color: "#d1d5db" }}>
+                    <span className="flex-1 text-[12px] truncate" style={{ color: DS.textSecondary }}>
                       {outcome.label}
                     </span>
                     <span
@@ -233,11 +241,11 @@ export function FeaturedHero(props: FeaturedHeroProps) {
                       <span
                         key={outcome.label}
                         className="flex items-center gap-1 text-[9px]"
-                        style={{ color: "#6b7280" }}
+                        style={{ color: DS.accentGray }}
                       >
                         <span
                           className="inline-block w-1.5 h-1.5 rounded-full"
-                          style={{ background: OUTCOME_COLORS[i] ?? "#60a5fa" }}
+                          style={{ background: OUTCOME_COLORS[i] ?? DS.accentPrimary }}
                         />
                         {outcome.label}
                       </span>
@@ -292,7 +300,7 @@ export function FeaturedHero(props: FeaturedHeroProps) {
 
             <div
               className="text-[10px] tabular-nums pt-1"
-              style={{ color: "#4b5563", fontFamily: "JetBrains Mono, monospace" }}
+              style={{ color: DS.accentGray, fontFamily: "JetBrains Mono, monospace" }}
             >
               {formatVolume(market.volume)} vol · {timeUntil(market.closingDate)}
             </div>
@@ -300,7 +308,7 @@ export function FeaturedHero(props: FeaturedHeroProps) {
 
           <div
             className="hidden sm:flex items-center justify-center sm:w-[360px] shrink-0 px-4 py-3"
-            style={{ background: "#0d0d17", borderLeft: "1px solid #191924" }}
+            style={{ background: DS.bgDarkest, borderLeft: `1px solid ${DS.bgDarkGray}` }}
           >
             {isMulti && <MultiLineChart market={market} />}
           </div>

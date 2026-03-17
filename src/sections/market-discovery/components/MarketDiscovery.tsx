@@ -3,6 +3,7 @@ import type {
   SortOption,
   Market,
 } from "@/product/sections/market-discovery/types";
+import { DS } from "@/product/design-system/colors";
 import { FeaturedHero } from "./FeaturedHero";
 import { BinaryCard } from "./BinaryCard";
 import { MultiCard } from "./MultiCard";
@@ -30,7 +31,10 @@ function CategoryStrip(props: {
   const { categories, active, onChange } = props;
 
   return (
-    <div className="flex overflow-x-auto scrollbar-none" style={{ borderBottom: "1px solid #16161f" }}>
+    <div
+      className="flex overflow-x-auto scrollbar-none"
+      style={{ borderBottom: `1px solid ${DS.bgDarkGray}` }}
+    >
       {categories.map((category) => (
         <button
           key={category}
@@ -38,10 +42,10 @@ function CategoryStrip(props: {
           className="shrink-0 px-3 py-2 text-[12px] whitespace-nowrap transition-all duration-100"
           style={{
             fontWeight: active === category ? 600 : 400,
-            color: active === category ? "#a78bfa" : "#52525b",
+            color: active === category ? DS.accentPrimary : DS.accentGray,
             background: "none",
             border: "none",
-            borderBottom: `2px solid ${active === category ? "#7c3aed" : "transparent"}`,
+            borderBottom: `2px solid ${active === category ? DS.accentDarker : "transparent"}`,
             cursor: "pointer",
           }}
         >
@@ -67,9 +71,9 @@ function FilterPills(props: {
           onClick={() => onChange(pill)}
           className="shrink-0 px-[10px] py-[3px] text-[11px] font-medium rounded-full border transition-all duration-100"
           style={{
-            background: active === pill ? "#5b21b6" : "transparent",
-            color: active === pill ? "#ede9fe" : "#6b7280",
-            borderColor: active === pill ? "#6d28d9" : "#1e1e2a",
+            background: active === pill ? "rgba(255,174,66,0.16)" : "transparent",
+            color: active === pill ? DS.accentPrimary : DS.accentGray,
+            borderColor: active === pill ? DS.accentDarker : DS.bgSurface,
             cursor: "pointer",
           }}
         >
@@ -88,16 +92,16 @@ function BreakingNewsSidebar(props: {
   return (
     <div
       className="rounded-xl overflow-hidden"
-      style={{ background: "#161621", border: "1px solid #1e1e2a" }}
+      style={{ background: DS.bgDark, border: `1px solid ${DS.bgSurface}` }}
     >
       <div
         className="flex items-center justify-between px-3 py-2.5"
-        style={{ borderBottom: "1px solid #191924" }}
+        style={{ borderBottom: `1px solid ${DS.bgDarkGray}` }}
       >
-        <span className="text-[11px] font-semibold" style={{ color: "#d1d5db" }}>
+        <span className="text-[11px] font-semibold" style={{ color: DS.textPrimary }}>
           Breaking news
         </span>
-        <span className="text-[12px] cursor-pointer font-medium" style={{ color: "#7c3aed" }}>
+        <span className="text-[12px] cursor-pointer font-medium" style={{ color: DS.accentPrimary }}>
           ›
         </span>
       </div>
@@ -105,9 +109,9 @@ function BreakingNewsSidebar(props: {
         <div
           key={item.id}
           className="flex gap-2.5 px-3 py-2.5 cursor-pointer transition-colors duration-100"
-          style={{ borderBottom: index < items.length - 1 ? "1px solid #191924" : "none" }}
+          style={{ borderBottom: index < items.length - 1 ? `1px solid ${DS.bgDarkGray}` : "none" }}
           onMouseEnter={(event) => {
-            event.currentTarget.style.background = "#1b1b27";
+            event.currentTarget.style.background = DS.bgDarkGray;
           }}
           onMouseLeave={(event) => {
             event.currentTarget.style.background = "transparent";
@@ -115,27 +119,27 @@ function BreakingNewsSidebar(props: {
         >
           <span
             className="text-[10px] font-semibold min-w-[14px] pt-0.5 tabular-nums"
-            style={{ color: "#3f3f52" }}
+            style={{ color: DS.accentGray }}
           >
             {index + 1}
           </span>
           <div className="flex-1 min-w-0">
             <p
               className="text-[11px] leading-[1.4] mb-1.5"
-              style={{ color: "#d1d5db" }}
+              style={{ color: DS.textPrimary }}
             >
               {item.question}
             </p>
             <div className="flex items-center gap-1.5">
               <span
                 className="text-[13px] font-bold tabular-nums"
-                style={{ color: "#fff", fontFamily: "JetBrains Mono, monospace" }}
+                style={{ color: DS.textPrimary, fontFamily: "JetBrains Mono, monospace" }}
               >
                 {item.probability}%
               </span>
               <span
                 className="text-[10px] font-semibold tabular-nums"
-                style={{ color: item.direction === "up" ? "#6ee7b7" : "#f4a4a4" }}
+                style={{ color: item.direction === "up" ? DS.success : DS.error }}
               >
                 {item.direction === "up" ? "▲" : "▼"} {item.change}%
               </span>
@@ -155,16 +159,16 @@ function HotTopicsSidebar(props: {
   return (
     <div
       className="rounded-xl overflow-hidden"
-      style={{ background: "#161621", border: "1px solid #1e1e2a" }}
+      style={{ background: DS.bgDark, border: `1px solid ${DS.bgSurface}` }}
     >
       <div
         className="flex items-center justify-between px-3 py-2.5"
-        style={{ borderBottom: "1px solid #191924" }}
+        style={{ borderBottom: `1px solid ${DS.bgDarkGray}` }}
       >
-        <span className="text-[11px] font-semibold" style={{ color: "#d1d5db" }}>
+        <span className="text-[11px] font-semibold" style={{ color: DS.textPrimary }}>
           Hot topics
         </span>
-        <span className="text-[12px] cursor-pointer font-medium" style={{ color: "#7c3aed" }}>
+        <span className="text-[12px] cursor-pointer font-medium" style={{ color: DS.accentPrimary }}>
           ›
         </span>
       </div>
@@ -172,9 +176,9 @@ function HotTopicsSidebar(props: {
         <div
           key={topic.label}
           className="flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors duration-100"
-          style={{ borderBottom: index < topics.length - 1 ? "1px solid #191924" : "none" }}
+          style={{ borderBottom: index < topics.length - 1 ? `1px solid ${DS.bgDarkGray}` : "none" }}
           onMouseEnter={(event) => {
-            event.currentTarget.style.background = "#1b1b27";
+            event.currentTarget.style.background = DS.bgDarkGray;
           }}
           onMouseLeave={(event) => {
             event.currentTarget.style.background = "transparent";
@@ -182,24 +186,24 @@ function HotTopicsSidebar(props: {
         >
           <span
             className="text-[10px] font-semibold min-w-[14px] tabular-nums"
-            style={{ color: "#3f3f52" }}
+            style={{ color: DS.accentGray }}
           >
             {index + 1}
           </span>
           <span
             className="flex-1 text-[11px] font-medium"
-            style={{ color: "#d1d5db" }}
+            style={{ color: DS.textPrimary }}
           >
             {topic.label}
           </span>
           <span
             className="text-[9px] whitespace-nowrap tabular-nums"
-            style={{ color: "#52525b", fontFamily: "JetBrains Mono, monospace" }}
+            style={{ color: DS.accentGray, fontFamily: "JetBrains Mono, monospace" }}
           >
             {topic.volume}
           </span>
           {topic.isHot && (
-            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "#f59e0b" }} />
+            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: DS.accentPrimary }} />
           )}
         </div>
       ))}
@@ -211,20 +215,20 @@ function SignUpCTA() {
   return (
     <div
       className="rounded-xl p-4"
-      style={{ background: "#161621", border: "1px solid #272736" }}
+      style={{ background: DS.bgDark, border: `1px solid ${DS.bgSurface}` }}
     >
-      <p className="text-[12px] font-semibold mb-1" style={{ color: "#e5e7eb" }}>
+      <p className="text-[12px] font-semibold mb-1" style={{ color: DS.textPrimary }}>
         Start trading
       </p>
-      <p className="text-[10px] leading-[1.5] mb-3" style={{ color: "#6b7280" }}>
+      <p className="text-[10px] leading-[1.5] mb-3" style={{ color: DS.accentGray }}>
         Predict music outcomes. Earn on accuracy.
       </p>
       <button
         className="w-full py-2 text-[12px] font-semibold rounded-lg transition-opacity hover:opacity-90"
         style={{
-          color: "#ede9fe",
-          background: "#5b21b6",
-          border: "1px solid #6d28d9",
+          color: DS.neutralDark,
+          background: DS.accentGradient,
+          border: "none",
           cursor: "pointer",
         }}
       >
@@ -294,13 +298,13 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
     <div
       className="min-h-screen text-white"
       style={{
-        background: "#0f0f1a",
+        background: DS.bgDarkest,
         fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif",
       }}
     >
       <div
         className="sticky top-14 z-20"
-        style={{ background: "#0b0b14", borderBottom: "1px solid #16161f" }}
+        style={{ background: "rgba(18,18,18,0.96)", borderBottom: `1px solid ${DS.bgDarkGray}` }}
       >
         <div className="flex items-center gap-2.5 px-5 pt-2 pb-1.5 max-w-[1380px] mx-auto">
           <div className="relative flex-1 max-w-[480px]">
@@ -322,15 +326,15 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
               placeholder="Search markets..."
               className="w-full pl-[30px] pr-3 py-[7px] text-[12px] rounded-lg outline-none transition-colors"
               style={{
-                background: "#161621",
-                border: "1px solid #1e1e2a",
-                color: "#e5e7eb",
+                background: DS.bgDark,
+                border: `1px solid ${DS.bgSurface}`,
+                color: DS.textPrimary,
               }}
               onFocus={(event) => {
-                event.target.style.borderColor = "#5b21b6";
+                event.target.style.borderColor = DS.accentDarker;
               }}
               onBlur={(event) => {
-                event.target.style.borderColor = "#1e1e2a";
+                event.target.style.borderColor = DS.bgSurface;
               }}
             />
           </div>
@@ -340,7 +344,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
               value={activeSort}
               onChange={(event) => onSortChange(event.target.value as SortOption)}
               className="appearance-none pl-2.5 pr-6 py-[7px] text-[11px] font-medium rounded-lg outline-none cursor-pointer"
-              style={{ background: "#161621", border: "1px solid #1e1e2a", color: "#6b7280" }}
+              style={{ background: DS.bgDark, border: `1px solid ${DS.bgSurface}`, color: DS.accentGray }}
             >
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -357,7 +361,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
             >
               <path
                 d="M2 3.5L5 6.5L8 3.5"
-                stroke="#52525b"
+                stroke={DS.accentGray}
                 strokeWidth="1.5"
                 strokeLinecap="round"
               />
@@ -386,7 +390,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
           )}
 
           <div className="flex items-center gap-3 mb-2.5">
-            <h3 className="text-[13px] font-semibold" style={{ color: "#e5e7eb" }}>
+            <h3 className="text-[13px] font-semibold" style={{ color: DS.textPrimary }}>
               {searchQuery
                 ? `Results for "${searchQuery}"`
                 : activeCategory !== "All"
@@ -396,8 +400,8 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
             <span
               className="text-[11px] tabular-nums px-1.5 py-0.5 rounded"
               style={{
-                color: "#52525b",
-                background: "#161621",
+                color: DS.accentGray,
+                background: DS.bgDark,
                 fontFamily: "JetBrains Mono, monospace",
               }}
             >
@@ -445,18 +449,18 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                     disabled={isLoadingMore}
                     className="px-5 py-2 text-[12px] font-medium rounded-lg transition-all duration-100 disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{
-                      color: "#6b7280",
-                      background: "#161621",
-                      border: "1px solid #1e1e2a",
+                    color: DS.accentGray,
+                    background: DS.bgDark,
+                    border: `1px solid ${DS.bgSurface}`,
                       cursor: "pointer",
                     }}
                     onMouseEnter={(event) => {
-                      event.currentTarget.style.color = "#d1d5db";
-                      event.currentTarget.style.borderColor = "#272736";
+                    event.currentTarget.style.color = DS.textPrimary;
+                    event.currentTarget.style.borderColor = DS.accentGray;
                     }}
                     onMouseLeave={(event) => {
-                      event.currentTarget.style.color = "#6b7280";
-                      event.currentTarget.style.borderColor = "#1e1e2a";
+                    event.currentTarget.style.color = DS.accentGray;
+                    event.currentTarget.style.borderColor = DS.bgSurface;
                     }}
                   >
                     {isLoadingMore ? "Loading…" : "Show more markets"}
@@ -466,10 +470,10 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-20 gap-2">
-              <p className="text-[13px] font-medium" style={{ color: "#6b7280" }}>
+              <p className="text-[13px] font-medium" style={{ color: DS.accentGray }}>
                 No markets found
               </p>
-              <p className="text-[11px]" style={{ color: "#3f3f52" }}>
+              <p className="text-[11px]" style={{ color: DS.textSecondary }}>
                 {searchQuery ? `No results for "${searchQuery}"` : "No markets in this category"}
               </p>
               {(searchQuery || activeFilterPill !== "All") && (
@@ -480,9 +484,9 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                   }}
                   className="mt-3 px-3.5 py-1.5 text-[11px] font-medium rounded-md transition-opacity hover:opacity-80"
                   style={{
-                    color: "#a78bfa",
-                    background: "rgba(124,58,237,0.08)",
-                    border: "1px solid rgba(124,58,237,0.2)",
+                    color: DS.accentPrimary,
+                    background: "rgba(255,174,66,0.12)",
+                    border: `1px solid ${DS.accentDarker}`,
                     cursor: "pointer",
                   }}
                 >
@@ -501,7 +505,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
       </div>
 
       {/* ── FOOTER ──────────────────────────────────────────────────────── */}
-      <footer style={{ borderTop: "1px solid #1a1a28", marginTop: 48, background: "#0b0b14" }}>
+      <footer style={{ borderTop: `1px solid ${DS.bgDarkGray}`, marginTop: 48, background: DS.bgDark }}>
         {/* Main grid */}
         <div
           style={{
@@ -521,7 +525,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                   width: 28,
                   height: 28,
                   borderRadius: 7,
-                  background: "linear-gradient(135deg,#7c3aed,#4338ca)",
+                  background: DS.accentGradient,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -535,14 +539,14 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                 style={{
                   fontSize: 15,
                   fontWeight: 800,
-                  color: "#fff",
+                  color: DS.textPrimary,
                   letterSpacing: "-0.02em",
                 }}
               >
                 Marination Music
               </span>
             </div>
-            <p style={{ fontSize: 11, color: "#6b7280", lineHeight: 1.6, marginTop: 2 }}>
+            <p style={{ fontSize: 11, color: DS.accentGray, lineHeight: 1.6, marginTop: 2 }}>
               The World's Largest Music
               <br />
               Prediction Market™
@@ -555,7 +559,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-                color: "#6b7280",
+                color: DS.accentGray,
                 letterSpacing: "0.05em",
                 textTransform: "uppercase",
                 marginBottom: 14,
@@ -576,27 +580,27 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                   key={label}
                   style={{
                     padding: "6px 0",
-                    borderBottom: "1px solid #131320",
+                    borderBottom: `1px solid ${DS.bgDarkGray}`,
                     cursor: "pointer",
                   }}
                 >
                   <div
                     style={{
                       fontSize: 12,
-                      color: "#d1d5db",
+                      color: DS.textPrimary,
                       marginBottom: 1,
                       transition: "color 0.12s",
                     }}
                     onMouseEnter={(event) => {
-                      event.currentTarget.style.color = "#a78bfa";
+                      event.currentTarget.style.color = DS.accentPrimary;
                     }}
                     onMouseLeave={(event) => {
-                      event.currentTarget.style.color = "#d1d5db";
+                      event.currentTarget.style.color = DS.textPrimary;
                     }}
                   >
                     {label}
                   </div>
-                  <div style={{ fontSize: 10, color: "#4b5563" }}>{sub}</div>
+                  <div style={{ fontSize: 10, color: DS.textSecondary }}>{sub}</div>
                 </div>
               ))}
               <button
@@ -608,15 +612,15 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                   border: "none",
                   cursor: "pointer",
                   fontSize: 11,
-                  color: "#7c3aed",
+                  color: DS.accentPrimary,
                   fontWeight: 600,
                   textAlign: "left",
                 }}
                 onMouseEnter={(event) => {
-                  event.currentTarget.style.color = "#a78bfa";
+                  event.currentTarget.style.color = DS.accentMedium;
                 }}
                 onMouseLeave={(event) => {
-                  event.currentTarget.style.color = "#7c3aed";
+                  event.currentTarget.style.color = DS.accentPrimary;
                 }}
               >
                 View more ↓
@@ -630,7 +634,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-                color: "#6b7280",
+                color: DS.accentGray,
                 letterSpacing: "0.05em",
                 textTransform: "uppercase",
                 marginBottom: 14,
@@ -651,27 +655,27 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                   key={label}
                   style={{
                     padding: "6px 0",
-                    borderBottom: "1px solid #131320",
+                    borderBottom: `1px solid ${DS.bgDarkGray}`,
                     cursor: "pointer",
                   }}
                 >
                   <div
                     style={{
                       fontSize: 12,
-                      color: "#d1d5db",
+                      color: DS.textPrimary,
                       marginBottom: 1,
                       transition: "color 0.12s",
                     }}
                     onMouseEnter={(event) => {
-                      event.currentTarget.style.color = "#a78bfa";
+                      event.currentTarget.style.color = DS.accentPrimary;
                     }}
                     onMouseLeave={(event) => {
-                      event.currentTarget.style.color = "#d1d5db";
+                      event.currentTarget.style.color = DS.textPrimary;
                     }}
                   >
                     {label}
                   </div>
-                  <div style={{ fontSize: 10, color: "#4b5563" }}>{sub}</div>
+                  <div style={{ fontSize: 10, color: DS.textSecondary }}>{sub}</div>
                 </div>
               ))}
               <button
@@ -683,15 +687,15 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                   border: "none",
                   cursor: "pointer",
                   fontSize: 11,
-                  color: "#7c3aed",
+                  color: DS.accentPrimary,
                   fontWeight: 600,
                   textAlign: "left",
                 }}
                 onMouseEnter={(event) => {
-                  event.currentTarget.style.color = "#a78bfa";
+                  event.currentTarget.style.color = DS.accentMedium;
                 }}
                 onMouseLeave={(event) => {
-                  event.currentTarget.style.color = "#7c3aed";
+                  event.currentTarget.style.color = DS.accentPrimary;
                 }}
               >
                 View more ↓
@@ -705,7 +709,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-                color: "#6b7280",
+                color: DS.accentGray,
                 letterSpacing: "0.05em",
                 textTransform: "uppercase",
                 marginBottom: 14,
@@ -722,15 +726,15 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                     onClick={(event) => event.preventDefault()}
                     style={{
                       fontSize: 12,
-                      color: "#9ca3af",
+                      color: DS.textSecondary,
                       textDecoration: "none",
                       transition: "color 0.12s",
                     }}
                     onMouseEnter={(event) => {
-                      event.currentTarget.style.color = "#fff";
+                      event.currentTarget.style.color = DS.textPrimary;
                     }}
                     onMouseLeave={(event) => {
-                      event.currentTarget.style.color = "#9ca3af";
+                      event.currentTarget.style.color = DS.textSecondary;
                     }}
                   >
                     {label}
@@ -746,7 +750,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-                color: "#6b7280",
+                color: DS.accentGray,
                 letterSpacing: "0.05em",
                 textTransform: "uppercase",
                 marginBottom: 14,
@@ -771,15 +775,15 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                   onClick={(event) => event.preventDefault()}
                   style={{
                     fontSize: 12,
-                    color: "#9ca3af",
+                      color: DS.textSecondary,
                     textDecoration: "none",
                     transition: "color 0.12s",
                   }}
                   onMouseEnter={(event) => {
-                    event.currentTarget.style.color = "#fff";
+                      event.currentTarget.style.color = DS.textPrimary;
                   }}
                   onMouseLeave={(event) => {
-                    event.currentTarget.style.color = "#9ca3af";
+                      event.currentTarget.style.color = DS.textSecondary;
                   }}
                 >
                   {label}
@@ -792,7 +796,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
         {/* Bottom bar */}
         <div
           style={{
-            borderTop: "1px solid #131320",
+            borderTop: `1px solid ${DS.bgDarkGray}`,
             maxWidth: 1380,
             margin: "0 auto",
             padding: "14px 20px",
@@ -826,17 +830,17 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                   fontSize: 13,
                   cursor: "pointer",
                   background: "#171724",
-                  border: "1px solid #222230",
-                  color: "#9ca3af",
+                  border: `1px solid ${DS.bgSurface}`,
+                  color: DS.textSecondary,
                   transition: "all 0.12s",
                 }}
                 onMouseEnter={(event) => {
-                  event.currentTarget.style.background = "#222230";
-                  event.currentTarget.style.color = "#fff";
+                  event.currentTarget.style.background = DS.bgSurface;
+                  event.currentTarget.style.color = DS.textPrimary;
                 }}
                 onMouseLeave={(event) => {
                   event.currentTarget.style.background = "#171724";
-                  event.currentTarget.style.color = "#9ca3af";
+                  event.currentTarget.style.color = DS.textSecondary;
                 }}
               >
                 {ic}
@@ -845,7 +849,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
           </div>
 
           {/* Copyright */}
-          <p style={{ fontSize: 10, color: "#4b5563", textAlign: "center" }}>
+          <p style={{ fontSize: 10, color: DS.textSecondary, textAlign: "center" }}>
             Adventure One QSS Inc. © 2026&nbsp;&nbsp;
             {["Privacy", "Terms of Use", "Help Center", "Docs"].map((label, index) => (
               <span key={label}>
@@ -853,15 +857,15 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                   href="#"
                   onClick={(event) => event.preventDefault()}
                   style={{
-                    color: "#6b7280",
+                    color: DS.accentGray,
                     textDecoration: "none",
                     transition: "color 0.12s",
                   }}
                   onMouseEnter={(event) => {
-                    event.currentTarget.style.color = "#9ca3af";
+                    event.currentTarget.style.color = DS.textSecondary;
                   }}
                   onMouseLeave={(event) => {
-                    event.currentTarget.style.color = "#6b7280";
+                    event.currentTarget.style.color = DS.accentGray;
                   }}
                 >
                   {label}
@@ -878,8 +882,8 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
               defaultValue="English"
               style={{
                 background: "#171724",
-                border: "1px solid #222230",
-                color: "#9ca3af",
+                border: `1px solid ${DS.bgSurface}`,
+                color: DS.textSecondary,
                 fontSize: 11,
                 borderRadius: 5,
                 padding: "4px 8px",
@@ -903,7 +907,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
             padding: "0 20px 24px",
           }}
         >
-          <p style={{ fontSize: 10, color: "#252535", lineHeight: 1.7 }}>
+          <p style={{ fontSize: 10, color: DS.textSecondary, lineHeight: 1.7 }}>
             Marination Music operates globally and is provided by Adventure One QSS Inc., a US-based
             technology company. This international platform is not regulated by the CFTC and may not
             accept persons from certain jurisdictions. Prediction markets involve financial risk —

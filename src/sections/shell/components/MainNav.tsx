@@ -1,4 +1,5 @@
 import { BarChart2, Briefcase, Compass, HelpCircle, SlidersHorizontal, Trophy } from "lucide-react";
+import { DS } from "@/product/design-system/colors";
 import type { NavigationItem } from "./AppShell";
 
 interface MainNavProps {
@@ -28,10 +29,14 @@ export function MainNav(props: MainNavProps) {
           className={[
             "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-150 shrink-0",
             item.isActive
-              ? "bg-violet-600 text-white shadow-sm shadow-violet-500/30"
-              : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100",
+              ? "shadow-sm"
+              : "hover:text-zinc-100",
           ].join(" ")}
-          style={{ fontFamily: "Space Grotesk, sans-serif" }}
+          style={{
+            fontFamily: "Space Grotesk, sans-serif",
+            background: item.isActive ? DS.accentGradient : "transparent",
+            color: item.isActive ? DS.neutralDark : DS.textSecondary,
+          }}
         >
           <span className={item.isActive ? "opacity-90" : "opacity-60"}>
             {ICON_MAP[item.href] ?? <Compass size={14} />}
