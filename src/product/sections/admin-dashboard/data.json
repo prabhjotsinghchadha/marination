@@ -1,0 +1,257 @@
+{
+  "markets": [
+    {
+      "id": "m1",
+      "question": "Will Bad Bunny's album hit 1B streams in 30 days?",
+      "slug": "bad-bunny-1b-streams",
+      "status": "OPEN",
+      "model": "CPMM_BINARY",
+      "volume": 4820110,
+      "yesPool": 2400000,
+      "noPool": 1800000,
+      "trades": 1402,
+      "endTime": "2026-04-01",
+      "createdAt": "2026-03-10"
+    },
+    {
+      "id": "m2",
+      "question": "Will Taylor Swift announce a new tour in Q2 2026?",
+      "slug": "taylor-swift-tour-q2",
+      "status": "OPEN",
+      "model": "CPMM_BINARY",
+      "volume": 15010311,
+      "yesPool": 8200000,
+      "noPool": 3400000,
+      "trades": 5891,
+      "endTime": "2026-06-30",
+      "createdAt": "2026-03-01"
+    },
+    {
+      "id": "m3",
+      "question": "Will Nicki Minaj gain 100K+ IG followers in 24h of endorsing Trump?",
+      "slug": "nicki-trump-100k",
+      "status": "RESOLVED",
+      "model": "CPMM_BINARY",
+      "volume": 892000,
+      "yesPool": 0,
+      "noPool": 0,
+      "trades": 340,
+      "endTime": "2026-02-20",
+      "createdAt": "2026-02-18",
+      "resolvedOutcome": "YES"
+    },
+    {
+      "id": "m4",
+      "question": "BTS vs BLACKPINK: Who hits more streams in first 72h?",
+      "slug": "bts-vs-blackpink-72h",
+      "status": "OPEN",
+      "model": "CPMM_BINARY",
+      "volume": 3100000,
+      "yesPool": 1600000,
+      "noPool": 900000,
+      "trades": 988,
+      "endTime": "2026-03-25",
+      "createdAt": "2026-03-12"
+    },
+    {
+      "id": "m5",
+      "question": "Will Kaskade lose 50K followers in March 2026?",
+      "slug": "kaskade-followers-march",
+      "status": "DRAFT",
+      "model": "CPMM_BINARY",
+      "volume": 0,
+      "yesPool": 0,
+      "noPool": 0,
+      "trades": 0,
+      "endTime": "2026-03-31",
+      "createdAt": "2026-03-17"
+    },
+    {
+      "id": "m6",
+      "question": "Will Ella Langley reach #1 on Billboard Hot 100?",
+      "slug": "ella-langley-billboard-1",
+      "status": "CLOSED",
+      "model": "CPMM_BINARY",
+      "volume": 220000,
+      "yesPool": 0,
+      "noPool": 0,
+      "trades": 77,
+      "endTime": "2026-03-15",
+      "createdAt": "2026-03-05"
+    }
+  ],
+  "users": [
+    {
+      "id": "u1",
+      "displayName": "MarkF",
+      "email": "mark@gmail.com",
+      "authProvider": "google",
+      "balance": 12400,
+      "reserved": 800,
+      "trades": 142,
+      "createdAt": "2026-01-15"
+    },
+    {
+      "id": "u2",
+      "displayName": "SoniaK",
+      "email": "sonia@gmail.com",
+      "authProvider": "google",
+      "balance": 5800,
+      "reserved": 200,
+      "trades": 89,
+      "createdAt": "2026-02-03"
+    },
+    {
+      "id": "u3",
+      "displayName": "djbeatroot",
+      "email": "dj@x.com",
+      "authProvider": "twitter",
+      "balance": 88200,
+      "reserved": 15000,
+      "trades": 780,
+      "createdAt": "2026-01-01"
+    },
+    {
+      "id": "u4",
+      "displayName": "LilyW",
+      "email": "lily@icloud.com",
+      "authProvider": "apple",
+      "balance": 1200,
+      "reserved": 0,
+      "trades": 14,
+      "createdAt": "2026-03-10"
+    },
+    {
+      "id": "u5",
+      "displayName": "NightOwl99",
+      "email": "owl@gmail.com",
+      "authProvider": "google",
+      "balance": 33000,
+      "reserved": 5000,
+      "trades": 310,
+      "createdAt": "2026-01-28"
+    }
+  ],
+  "trades": [
+    {
+      "id": "t1",
+      "marketQuestion": "Taylor Swift new tour Q2",
+      "user": "djbeatroot",
+      "type": "AMM_BUY",
+      "outcome": "YES",
+      "collateralIn": 500,
+      "sharesOut": 620,
+      "fee": 10,
+      "price": 0.81,
+      "createdAt": "2026-03-18 09:14"
+    },
+    {
+      "id": "t2",
+      "marketQuestion": "Bad Bunny 1B streams",
+      "user": "MarkF",
+      "type": "AMM_BUY",
+      "outcome": "NO",
+      "collateralIn": 200,
+      "sharesOut": 340,
+      "fee": 4,
+      "price": 0.59,
+      "createdAt": "2026-03-18 08:52"
+    },
+    {
+      "id": "t3",
+      "marketQuestion": "BTS vs BLACKPINK",
+      "user": "NightOwl99",
+      "type": "AMM_SELL",
+      "outcome": "YES",
+      "collateralIn": 0,
+      "sharesOut": 0,
+      "fee": 8,
+      "price": 0.67,
+      "createdAt": "2026-03-18 07:30"
+    },
+    {
+      "id": "t4",
+      "marketQuestion": "Taylor Swift new tour Q2",
+      "user": "SoniaK",
+      "type": "AMM_BUY",
+      "outcome": "YES",
+      "collateralIn": 100,
+      "sharesOut": 123,
+      "fee": 2,
+      "price": 0.81,
+      "createdAt": "2026-03-17 22:10"
+    },
+    {
+      "id": "t5",
+      "marketQuestion": "Bad Bunny 1B streams",
+      "user": "LilyW",
+      "type": "AMM_BUY",
+      "outcome": "YES",
+      "collateralIn": 50,
+      "sharesOut": 80,
+      "fee": 1,
+      "price": 0.63,
+      "createdAt": "2026-03-17 19:05"
+    },
+    {
+      "id": "t6",
+      "marketQuestion": "Nicki Trump 100K",
+      "user": "djbeatroot",
+      "type": "AMM_BUY",
+      "outcome": "NO",
+      "collateralIn": 1000,
+      "sharesOut": 2430,
+      "fee": 20,
+      "price": 0.41,
+      "createdAt": "2026-03-16 14:22"
+    }
+  ],
+  "ledger": [
+    {
+      "id": "l1",
+      "txType": "DEPOSIT",
+      "user": "djbeatroot",
+      "amount": 50000,
+      "status": "POSTED",
+      "ref": "USDC-0x8abc...f42",
+      "createdAt": "2026-01-01"
+    },
+    {
+      "id": "l2",
+      "txType": "AMM_TRADE",
+      "user": "djbeatroot",
+      "amount": -500,
+      "status": "POSTED",
+      "ref": "trade-t1",
+      "createdAt": "2026-03-18"
+    },
+    {
+      "id": "l3",
+      "txType": "DEPOSIT",
+      "user": "NightOwl99",
+      "amount": 35000,
+      "status": "POSTED",
+      "ref": "USDC-0x1def...a11",
+      "createdAt": "2026-01-29"
+    },
+    {
+      "id": "l4",
+      "txType": "WITHDRAWAL",
+      "user": "MarkF",
+      "amount": -2000,
+      "status": "PENDING",
+      "ref": "USDC-out-0x5bca",
+      "createdAt": "2026-03-17"
+    },
+    {
+      "id": "l5",
+      "txType": "PAYOUT",
+      "user": "SoniaK",
+      "amount": 420,
+      "status": "POSTED",
+      "ref": "market-m3-resolve",
+      "createdAt": "2026-02-21"
+    }
+  ]
+}
+
