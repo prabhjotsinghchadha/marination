@@ -7,6 +7,8 @@ import { DS } from "@/product/design-system/colors";
 import { FeaturedHero } from "./FeaturedHero";
 import { BinaryCard } from "./BinaryCard";
 import { MultiCard } from "./MultiCard";
+import { MarketFooter } from "./MarketFooter";
+import { Link } from "@/libs/I18nNavigation";
 
 function applySort(markets: Market[], sort: SortOption): Market[] {
     return [...markets].sort((a, b) => {
@@ -533,6 +535,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                     borderTop: `1px solid ${DS.bgDarkGray}`,
                     marginTop: 48,
                     background: DS.bgDark,
+                    display: "none",
                 }}
             >
                 {/* Main grid */}
@@ -899,23 +902,42 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                         Adventure One QSS Inc. © 2026&nbsp;&nbsp;
                         {["Privacy", "Terms of Use", "Help Center", "Docs"].map((label, index) => (
                             <span key={label}>
-                                <a
-                                    href="#"
-                                    onClick={(event) => event.preventDefault()}
-                                    style={{
-                                        color: DS.accentGray,
-                                        textDecoration: "none",
-                                        transition: "color 0.12s",
-                                    }}
-                                    onMouseEnter={(event) => {
-                                        event.currentTarget.style.color = DS.textSecondary;
-                                    }}
-                                    onMouseLeave={(event) => {
-                                        event.currentTarget.style.color = DS.accentGray;
-                                    }}
-                                >
-                                    {label}
-                                </a>
+                                {label === "Terms of Use" ? (
+                                    <Link
+                                        href="/terms-of-use"
+                                        style={{
+                                            color: DS.accentGray,
+                                            textDecoration: "none",
+                                            transition: "color 0.12s",
+                                        }}
+                                        onMouseEnter={(event) => {
+                                            event.currentTarget.style.color = DS.textSecondary;
+                                        }}
+                                        onMouseLeave={(event) => {
+                                            event.currentTarget.style.color = DS.accentGray;
+                                        }}
+                                    >
+                                        {label}
+                                    </Link>
+                                ) : (
+                                    <a
+                                        href="#"
+                                        onClick={(event) => event.preventDefault()}
+                                        style={{
+                                            color: DS.accentGray,
+                                            textDecoration: "none",
+                                            transition: "color 0.12s",
+                                        }}
+                                        onMouseEnter={(event) => {
+                                            event.currentTarget.style.color = DS.textSecondary;
+                                        }}
+                                        onMouseLeave={(event) => {
+                                            event.currentTarget.style.color = DS.accentGray;
+                                        }}
+                                    >
+                                        {label}
+                                    </a>
+                                )}
                                 {index < 3 && (
                                     <span style={{ margin: "0 6px", opacity: 0.35 }}>·</span>
                                 )}
@@ -966,6 +988,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                     </p>
                 </div>
             </footer>
+            <MarketFooter />
         </div>
     );
 }
