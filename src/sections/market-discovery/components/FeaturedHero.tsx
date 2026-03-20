@@ -152,7 +152,7 @@ export function FeaturedHero(props: FeaturedHeroProps) {
   const carouselItems = [spotlightMarket, market] as const;
 
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const activeMarket = carouselItems[activeIndex];
+  const activeMarket = carouselItems[activeIndex] ?? carouselItems[0];
   const [spotlightNewsExpanded, setSpotlightNewsExpanded] = useState<boolean>(false);
 
   const isSpotlightMarket = activeMarket.id === spotlightMarket.id;
@@ -163,8 +163,11 @@ export function FeaturedHero(props: FeaturedHeroProps) {
   const formatVolumeWithCommas = (v: number): string => Intl.NumberFormat("en-US").format(v);
 
   const goToIndex = (nextIndex: number) => {
-    setActiveIndex(nextIndex);
-    if (carouselItems[nextIndex].id === spotlightMarket.id) setSpotlightNewsExpanded(false);
+    const normalizedIndex =
+      ((nextIndex % carouselItems.length) + carouselItems.length) % carouselItems.length;
+    const nextMarket = carouselItems[normalizedIndex] ?? carouselItems[0];
+    setActiveIndex(normalizedIndex);
+    if (nextMarket.id === spotlightMarket.id) setSpotlightNewsExpanded(false);
   };
 
   const outcomes = activeMarket.outcomes ?? [];
