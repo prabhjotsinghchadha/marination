@@ -3,6 +3,7 @@ import { Menu, X } from "lucide-react";
 import { DS } from "@/product/design-system/colors";
 import { MainNav } from "./MainNav";
 import { UserMenu } from "./UserMenu";
+import Image from "next/image";
 
 export interface NavigationItem {
   label: string;
@@ -54,17 +55,25 @@ export function AppShell(props: AppShellProps) {
         >
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: DS.accentGradient }}
+            style={{ background: "transparent", boxShadow: "none" }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill={DS.neutralDark} aria-hidden="true">
-              <path d="M9 18V5l12-2v13M9 18c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-2c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
-            </svg>
+            <Image
+              src="/assets/logo/logo_minimal_white.png"
+              alt="Marination logo"
+              width={18}
+              height={18}
+              style={{ objectFit: "contain" }}
+              priority
+            />
           </div>
           <span
-            className="font-semibold text-sm tracking-tight hidden sm:block"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
+            className="font-semibold text-[22px] leading-none tracking-tight hidden sm:block"
+            style={{
+              fontFamily:
+                '"SF Pro Display","SF Pro Text",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
+            }}
           >
-            Marination
+            MariNation
           </span>
         </button>
 

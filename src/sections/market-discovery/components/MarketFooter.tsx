@@ -2,6 +2,7 @@
 
 import { DS } from "@/product/design-system/colors";
 import { Link } from "@/libs/I18nNavigation";
+import Image from "next/image";
 
 export function MarketFooter() {
   return (
@@ -31,15 +32,21 @@ export function MarketFooter() {
                 width: 28,
                 height: 28,
                 borderRadius: 7,
-                background: DS.accentGradient,
+                background: "transparent",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: 14,
-                boxShadow: "0 2px 8px rgba(124,58,237,0.4)",
+                boxShadow: "none",
               }}
             >
-              🎵
+              <Image
+                src="/assets/logo/logo_minimal_white.png"
+                alt="MariNation logo"
+                width={18}
+                height={18}
+                style={{ objectFit: "contain" }}
+                priority
+              />
             </div>
             <span
               style={{
@@ -49,7 +56,7 @@ export function MarketFooter() {
                 letterSpacing: "-0.02em",
               }}
             >
-              Marination Music
+              MariNation
             </span>
           </div>
           <p
