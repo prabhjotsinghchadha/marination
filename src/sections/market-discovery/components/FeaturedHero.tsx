@@ -1,5 +1,9 @@
+"use client";
+
 import type { Market } from "@/product/sections/market-discovery/types";
 import { DS } from "@/product/design-system/colors";
+import Image from "next/image";
+import { useState } from "react";
 
 const COLORS = {
   yesText: DS.success,
@@ -127,8 +131,44 @@ interface FeaturedHeroProps {
 export function FeaturedHero(props: FeaturedHeroProps) {
   const { market, onMarketClick, onYesClick, onNoClick } = props;
 
-  const outcomes = market.outcomes ?? [];
-  const isMulti = market.type === "multi" && outcomes.length > 0;
+  const spotlightMarket: Market = {
+    id: "hero-nicki-trump-01",
+    type: "binary",
+    icon: "👑",
+    question: "Will Nicki Minaj gain 100K+ Instagram followers within 24 hours of endorsing Trump?",
+    category: "Awards",
+    artist: "Nicki Minaj",
+    yesProbability: 0.6,
+    volume: 15010311,
+    liquidity: 4200000,
+    closingDate: "2026-03-21T00:00:00Z",
+    createdAt: "2026-03-20T00:00:00Z",
+    priceMovement: 2.4,
+    priceHistory: [0.52, 0.55, 0.56, 0.58, 0.59, 0.6, 0.6],
+    isTrending: true,
+    isNew: true,
+  };
+
+  const carouselItems = [spotlightMarket, market] as const;
+
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const activeMarket = carouselItems[activeIndex];
+  const [spotlightNewsExpanded, setSpotlightNewsExpanded] = useState<boolean>(false);
+
+  const isSpotlightMarket = activeMarket.id === spotlightMarket.id;
+
+  const spotlightNewsText =
+    'News • Nicki Minaj met with Donald Trump after the State of the Union address. She fully endorses president Trump and even went so far to say that she is his "biggest fan". While most of Hollywood and the performing arts in entertainment are heavily liberal, she stands by the president and is not afraid to voice her opinion for Trump. Nicki Minaj is one of the biggest female artists in music and has paved the way for all female rappers in the new music era. Her new album is set to be released in late 2026.';
+
+  const formatVolumeWithCommas = (v: number): string => Intl.NumberFormat("en-US").format(v);
+
+  const goToIndex = (nextIndex: number) => {
+    setActiveIndex(nextIndex);
+    if (carouselItems[nextIndex].id === spotlightMarket.id) setSpotlightNewsExpanded(false);
+  };
+
+  const outcomes = activeMarket.outcomes ?? [];
+  const isMulti = activeMarket.type === "multi" && outcomes.length > 0;
 
   return (
     <div className="mb-4">
@@ -140,10 +180,31 @@ export function FeaturedHero(props: FeaturedHeroProps) {
           Featured market
         </span>
         <div className="flex-1 h-px" style={{ background: DS.bgDarkGray }} />
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label="Previous featured market"
+            onClick={() => goToIndex((activeIndex - 1 + carouselItems.length) % carouselItems.length)}
+            className="w-7 h-7 rounded-lg text-white/90 border border-white/10 transition-opacity hover:opacity-90"
+            style={{ background: "rgba(0,0,0,0.08)" }}
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            aria-label="Next featured market"
+            onClick={() => goToIndex((activeIndex + 1) % carouselItems.length)}
+            className="w-7 h-7 rounded-lg text-white/90 border border-white/10 transition-opacity hover:opacity-90"
+            style={{ background: "rgba(0,0,0,0.08)" }}
+          >
+            ›
+          </button>
+        </div>
       </div>
 
       <div
-        onClick={() => onMarketClick(market.id)}
+        onClick={() => onMarketClick(activeMarket.id)}
         className="rounded-xl overflow-hidden cursor-pointer transition-all duration-200"
         style={{ background: DS.bgDark, border: `1px solid ${DS.bgSurface}` }}
         onMouseEnter={(e) => {
@@ -158,22 +219,208 @@ export function FeaturedHero(props: FeaturedHeroProps) {
             className="w-8 h-8 rounded-lg flex items-center justify-center text-base shrink-0"
             style={{ background: "rgba(255,174,66,0.18)", border: `1px solid ${DS.accentDarker}` }}
           >
-            {market.icon}
+            {activeMarket.icon}
           </div>
           <div className="flex-1 min-w-0">
-            <p
-              className="text-[10px] font-medium uppercase tracking-widest mb-0.5"
-              style={{ color: DS.accentGray }}
+            {!isSpotlightMarket && (
+              <p
+                className="text-[10px] font-medium uppercase tracking-widest mb-0.5"
+                style={{ color: DS.accentGray }}
+              >
+                {activeMarket.category}
+              </p>
+            )}
+            <h2
+              className="text-[15px] font-bold text-white leading-snug wrap-break-word"
+              style={{ maxWidth: isSpotlightMarket ? 540 : undefined }}
             >
-              {market.category}
-            </p>
-            <h2 className="text-[15px] font-bold text-white leading-snug">{market.question}</h2>
+              {activeMarket.question}
+            </h2>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row">
           <div className="flex-1 p-4 flex flex-col gap-2.5">
-            {isMulti ? (
+            {isSpotlightMarket ? (
+              spotlightNewsExpanded ? (
+                <div className="flex flex-col gap-3 w-full max-w-[460px] sm:max-w-[520px] md:max-w-[600px] xl:max-w-[680px]">
+                  <div className="grid grid-cols-[1fr_0.9fr_1.4fr] items-end gap-3">
+                    <div className="text-[11px] font-semibold" style={{ color: DS.accentGray }}>
+                      Market
+                    </div>
+                    <div className="text-[11px] font-semibold text-right" style={{ color: DS.accentGray }}>
+                      Payout
+                    </div>
+                    <div className="text-[11px] font-semibold text-right" style={{ color: DS.accentGray }}>
+                      Odds
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-[1fr_0.9fr_1.4fr] items-center gap-3">
+                    <div className="text-[12px] font-medium" style={{ color: DS.textPrimary }}>
+                      Yes
+                    </div>
+                    <div className="text-[12px] font-semibold text-right tabular-nums" style={{ color: DS.textPrimary }}>
+                      1.50x
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onYesClick(activeMarket.id);
+                      }}
+                      className="text-[11px] font-semibold rounded whitespace-nowrap transition-colors w-[118px] text-center justify-self-end"
+                      style={{
+                        padding: "7px 16px",
+                        color: DS.textPrimary,
+                        background: "rgba(0,0,0,0.15)",
+                        border: `1px solid ${DS.accentDarker}`,
+                      }}
+                    >
+                      Yes {Math.round(activeMarket.yesProbability * 100)}¢
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-[1fr_0.9fr_1.4fr] items-center gap-3">
+                    <div className="text-[12px] font-medium" style={{ color: DS.textPrimary }}>
+                      No
+                    </div>
+                    <div className="text-[12px] font-semibold text-right tabular-nums" style={{ color: DS.textPrimary }}>
+                      4.12x
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onNoClick(activeMarket.id);
+                      }}
+                      className="text-[11px] font-semibold rounded whitespace-nowrap transition-colors w-[118px] text-center justify-self-end"
+                      style={{
+                        padding: "7px 16px",
+                        color: DS.textPrimary,
+                        background: "rgba(0,0,0,0.15)",
+                        border: `1px solid ${DS.error}`,
+                      }}
+                    >
+                      No {100 - Math.round(activeMarket.yesProbability * 100)}¢
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="text-[11px] font-semibold tabular-nums" style={{ color: DS.textSecondary }}>
+                      Volume ${formatVolumeWithCommas(activeMarket.volume)}
+                    </span>
+                    <span className="text-[11px] font-semibold tabular-nums" style={{ color: DS.textSecondary }}>
+                      2 markets
+                    </span>
+                  </div>
+
+                  <div className="h-px" style={{ background: `${DS.bgDarkGray}80` }} />
+
+                  <p className="text-[12px] leading-[1.4]" style={{ color: DS.accentGray }}>
+                    {spotlightNewsText}
+                  </p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3 w-full max-w-[460px] sm:max-w-[520px] md:max-w-[600px] xl:max-w-[680px]">
+                  <div className="grid grid-cols-[1fr_0.9fr_1.4fr] items-end gap-3">
+                    <div className="text-[11px] font-semibold" style={{ color: DS.accentGray }}>
+                      Market
+                    </div>
+                    <div className="text-[11px] font-semibold text-right" style={{ color: DS.accentGray }}>
+                      Payout
+                    </div>
+                    <div className="text-[11px] font-semibold text-right" style={{ color: DS.accentGray }}>
+                      Odds
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-[1fr_0.9fr_1.4fr] items-center gap-3">
+                    <div className="text-[12px] font-medium" style={{ color: DS.textPrimary }}>
+                      Yes
+                    </div>
+                    <div className="text-[12px] font-semibold text-right tabular-nums" style={{ color: DS.textPrimary }}>
+                      1.50x
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onYesClick(activeMarket.id);
+                      }}
+                      className="text-[11px] font-semibold rounded whitespace-nowrap transition-colors w-[118px] text-center justify-self-end"
+                      style={{
+                        padding: "7px 16px",
+                        color: DS.textPrimary,
+                        background: "rgba(0,0,0,0.15)",
+                        border: `1px solid ${DS.accentDarker}`,
+                      }}
+                    >
+                      Yes {Math.round(activeMarket.yesProbability * 100)}¢
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-[1fr_0.9fr_1.4fr] items-center gap-3">
+                    <div className="text-[12px] font-medium" style={{ color: DS.textPrimary }}>
+                      No
+                    </div>
+                    <div className="text-[12px] font-semibold text-right tabular-nums" style={{ color: DS.textPrimary }}>
+                      4.12x
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onNoClick(activeMarket.id);
+                      }}
+                      className="text-[11px] font-semibold rounded whitespace-nowrap transition-colors w-[118px] text-center justify-self-end"
+                      style={{
+                        padding: "7px 16px",
+                        color: DS.textPrimary,
+                        background: "rgba(0,0,0,0.15)",
+                        border: `1px solid ${DS.error}`,
+                      }}
+                    >
+                      No {100 - Math.round(activeMarket.yesProbability * 100)}¢
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="text-[11px] font-semibold tabular-nums" style={{ color: DS.textSecondary }}>
+                      Volume ${formatVolumeWithCommas(activeMarket.volume)}
+                    </span>
+                    <span className="text-[11px] font-semibold tabular-nums" style={{ color: DS.textSecondary }}>
+                      2 markets
+                    </span>
+                  </div>
+
+                  <div className="h-px" style={{ background: `${DS.bgDarkGray}80` }} />
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSpotlightNewsExpanded(true);
+                    }}
+                    className="text-left"
+                    style={{ cursor: "pointer" }}
+                    aria-label="Expand spotlight news"
+                  >
+                    <p
+                      className="text-[12px] leading-[1.4]"
+                      style={{
+                        color: DS.accentGray,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {spotlightNewsText}
+                    </p>
+                    <span className="text-[12px] font-semibold" style={{ color: DS.accentPrimary }}>
+                      ...
+                    </span>
+                  </button>
+                </div>
+              )
+            ) : isMulti ? (
               <>
                 {outcomes.map((outcome, i) => (
                   <div key={outcome.label} className="flex items-center gap-2.5">
@@ -193,7 +440,7 @@ export function FeaturedHero(props: FeaturedHeroProps) {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onYesClick(market.id, i);
+                        onYesClick(activeMarket.id, i);
                       }}
                       className="text-[11px] font-semibold rounded whitespace-nowrap transition-colors"
                       style={{
@@ -214,7 +461,7 @@ export function FeaturedHero(props: FeaturedHeroProps) {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onNoClick(market.id, i);
+                        onNoClick(activeMarket.id, i);
                       }}
                       className="text-[11px] font-semibold rounded whitespace-nowrap transition-colors"
                       style={{
@@ -259,13 +506,13 @@ export function FeaturedHero(props: FeaturedHeroProps) {
                   className="text-4xl font-extrabold tabular-nums leading-none"
                   style={{ color: "#fff", fontFamily: "JetBrains Mono, monospace" }}
                 >
-                  {Math.round(market.yesProbability * 100)}%
+                  {Math.round(activeMarket.yesProbability * 100)}%
                 </span>
                 <div className="flex flex-col gap-1.5 flex-1">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      onYesClick(market.id);
+                      onYesClick(activeMarket.id);
                     }}
                     className="px-3 py-1.5 text-[11px] font-semibold rounded transition-colors"
                     style={{ color: COLORS.yesText, background: COLORS.yesBg }}
@@ -276,12 +523,12 @@ export function FeaturedHero(props: FeaturedHeroProps) {
                       e.currentTarget.style.background = COLORS.yesBg;
                     }}
                   >
-                    Yes {Math.round(market.yesProbability * 100)}¢
+                    Yes {Math.round(activeMarket.yesProbability * 100)}¢
                   </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      onNoClick(market.id);
+                      onNoClick(activeMarket.id);
                     }}
                     className="px-3 py-1.5 text-[11px] font-semibold rounded transition-colors"
                     style={{ color: COLORS.noText, background: COLORS.noBg }}
@@ -292,27 +539,61 @@ export function FeaturedHero(props: FeaturedHeroProps) {
                       e.currentTarget.style.background = COLORS.noBg;
                     }}
                   >
-                    No {100 - Math.round(market.yesProbability * 100)}¢
+                    No {100 - Math.round(activeMarket.yesProbability * 100)}¢
                   </button>
                 </div>
               </div>
             )}
 
-            <div
-              className="text-[10px] tabular-nums pt-1"
-              style={{ color: DS.accentGray, fontFamily: "JetBrains Mono, monospace" }}
-            >
-              {formatVolume(market.volume)} vol · {timeUntil(market.closingDate)}
-            </div>
+            {!isSpotlightMarket && (
+              <div
+                className="text-[10px] tabular-nums pt-1"
+                style={{ color: DS.accentGray, fontFamily: "JetBrains Mono, monospace" }}
+              >
+                {formatVolume(activeMarket.volume)} vol · {timeUntil(activeMarket.closingDate)}
+              </div>
+            )}
           </div>
 
           <div
             className="hidden sm:flex items-center justify-center sm:w-[360px] shrink-0 px-4 py-3"
             style={{ background: DS.bgDarkest, borderLeft: `1px solid ${DS.bgDarkGray}` }}
           >
-            {isMulti && <MultiLineChart market={market} />}
+            {activeMarket.id === spotlightMarket.id ? (
+              <div className="relative w-full h-full min-h-[168px]">
+                <Image
+                  src="/assets/hero-section/nicki.jpg"
+                  alt="Spotlight featured image"
+                  fill
+                  sizes="(max-width: 640px) 100vw, 360px"
+                  style={{ objectFit: "cover", objectPosition: "center" }}
+                  priority
+                />
+              </div>
+            ) : (
+              isMulti && <MultiLineChart market={activeMarket} />
+            )}
           </div>
         </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-2 pt-3">
+        {carouselItems.map((_, i) => (
+          <button
+            // eslint-disable-next-line react/no-array-index-key
+            key={i}
+            type="button"
+            aria-label={`Go to featured slide ${i + 1}`}
+            onClick={() => goToIndex(i)}
+            className="w-2.5 h-2.5 rounded-full transition-opacity"
+            style={{
+              background: i === activeIndex ? DS.accentPrimary : DS.bgDarkGray,
+              opacity: i === activeIndex ? 1 : 0.7,
+              border: "none",
+              cursor: "pointer",
+            }}
+          />
+        ))}
       </div>
     </div>
   );
