@@ -1,0 +1,105 @@
+{
+  "events": [
+    {
+      "slug": "drake-vs-kendrick-streams-24h",
+      "category": "Artist battles",
+      "title": "Drake vs Kendrick Lamar: who gets more streams in the next 24 hours?",
+      "summary": "If Drake records more verified combined streams than Kendrick Lamar in the 24-hour measurement window, this market resolves to Drake.",
+      "notes": "This event is mutually exclusive and resolves from official published data sources.",
+      "rules": [
+        "Resolution sources include Spotify Charts, YouTube Music analytics, and Apple Music chart snapshots.",
+        "If either artist releases a new track during the window, all streams still count as long as they are publicly available.",
+        "In case of a tie after all sources are normalized, the market resolves 50/50."
+      ],
+      "timelineAndPayout": "The market closes at 23:59 UTC and resolves within 12 hours after source verification. Winning YES shares settle at $1.00 and losing shares settle at $0.00.",
+      "prohibitions": "Users with direct reporting access to unreleased source data may not trade this market before public publication.",
+      "options": [
+        {
+          "id": "drake",
+          "name": "Drake",
+          "probability": 55,
+          "yesPriceCents": 55,
+          "noPriceCents": 45,
+          "avatarLabel": "DR",
+          "avatarStartColor": "#F7941D",
+          "avatarEndColor": "#FFD16F"
+        },
+        {
+          "id": "kendrick",
+          "name": "Kendrick Lamar",
+          "probability": 45,
+          "yesPriceCents": 45,
+          "noPriceCents": 55,
+          "avatarLabel": "KL",
+          "avatarStartColor": "#6D28D9",
+          "avatarEndColor": "#C4B5FD"
+        }
+      ],
+      "chart": {
+        "labels": ["Feb 1", "Feb 3", "Feb 5", "Feb 7", "Feb 9", "Feb 11", "Feb 13"],
+        "yTicks": [60, 50, 40, 30, 20],
+        "volumeLabel": "$188,185,564 volume",
+        "series": [
+          {
+            "id": "drake",
+            "label": "Drake",
+            "color": "#FFAE42",
+            "points": [48, 51, 53, 54, 52, 55, 55]
+          },
+          {
+            "id": "kendrick",
+            "label": "Kendrick Lamar",
+            "color": "#F2F2F7",
+            "points": [52, 49, 47, 46, 48, 45, 45]
+          }
+        ]
+      },
+      "relatedMarkets": [
+        {
+          "id": "rm-1",
+          "title": "BTS vs Blackpink: who gets more streams in the first 72 hours?",
+          "category": "Artist battles"
+        },
+        {
+          "id": "rm-2",
+          "title": "Who gains more Instagram followers over the next 24 hours?",
+          "category": "Social growth"
+        },
+        {
+          "id": "rm-3",
+          "title": "Which DJ loses the most followers this week?",
+          "category": "Fan trends"
+        }
+      ],
+      "comments": [
+        {
+          "id": "c-1",
+          "username": "MusicLovers69",
+          "pick": "Drake",
+          "timeAgo": "30 min ago",
+          "avatarLabel": "ML",
+          "avatarStartColor": "#22C55E",
+          "avatarEndColor": "#86EFAC"
+        },
+        {
+          "id": "c-2",
+          "username": "Drake123",
+          "pick": "Drake all day",
+          "timeAgo": "45 min ago",
+          "avatarLabel": "D1",
+          "avatarStartColor": "#F97316",
+          "avatarEndColor": "#FDBA74"
+        },
+        {
+          "id": "c-3",
+          "username": "KdotForever",
+          "pick": "Kendrick takes this one",
+          "timeAgo": "1 h ago",
+          "avatarLabel": "KF",
+          "avatarStartColor": "#0EA5E9",
+          "avatarEndColor": "#7DD3FC"
+        }
+      ]
+    }
+  ]
+}
