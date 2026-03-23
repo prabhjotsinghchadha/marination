@@ -1,3 +1,5 @@
+"use client";
+
 import { DocsPdfViewer } from "@/sections/docs/DocsPdfViewer";
 import { MarketFooter } from "@/sections/market-discovery/components/MarketFooter";
 

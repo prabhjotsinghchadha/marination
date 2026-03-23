@@ -1,3 +1,5 @@
+"use client";
+
 import { TermsOfUsePdfViewer } from "@/sections/terms-of-use/TermsOfUsePdfViewer";
 import { MarketFooter } from "@/sections/market-discovery/components/MarketFooter";
 

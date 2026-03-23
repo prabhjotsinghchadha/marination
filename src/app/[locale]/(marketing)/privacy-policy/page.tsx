@@ -1,3 +1,5 @@
+"use client";
+
 import { PrivacyPolicyPdfViewer } from "@/sections/privacy-policy/PrivacyPolicyPdfViewer";
 import { MarketFooter } from "@/sections/market-discovery/components/MarketFooter";
 
