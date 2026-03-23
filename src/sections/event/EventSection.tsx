@@ -11,8 +11,11 @@ type EventSectionProps = {
 const typedEventData = eventData as EventData;
 
 export function EventSection(props: EventSectionProps) {
-  const event =
-    typedEventData.events.find(item => item.slug === props.slug) ?? typedEventData.events[0];
+  const event = typedEventData.events.find(item => item.slug === props.slug);
+
+  if (!event) {
+    return null;
+  }
 
   return <EventMarket event={event} />;
 }

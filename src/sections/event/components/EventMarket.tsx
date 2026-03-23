@@ -134,7 +134,7 @@ function MiniChart(props: { event: EventDetails }) {
       </p>
 
       <svg viewBox={`0 0 ${width} ${height + 24}`} className="w-full">
-        {props.event.chart.yTicks.map((tick, index) => {
+        {props.event.chart.yTicks.map(tick => {
           const y = ((maxTick - tick) / Math.max(1, maxTick - minTick)) * height;
           return (
             <g key={tick}>
