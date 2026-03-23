@@ -1,3 +1,5 @@
+"use client";
+
 import { HelpCenterPdfViewer } from "@/sections/help-center/HelpCenterPdfViewer";
 import { MarketFooter } from "@/sections/market-discovery/components/MarketFooter";
 
