@@ -5,6 +5,27 @@ import { Link } from "@/libs/I18nNavigation";
 import Image from "next/image";
 
 export function MarketFooter() {
+  const companyLinks = [
+    { label: "About", href: "/about" },
+    { label: "Blog", href: "#" },
+    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Terms Of Use", href: "/terms-of-use" },
+  ] as const;
+
+  const socialLinks = [
+    { label: "TikTok", href: "#" },
+    { label: "Instagram", href: "#" },
+    { label: "YouTube", href: "#" },
+    { label: "Discord", href: "#" },
+  ] as const;
+
+  const productLinks = [
+    { label: "Help Center", href: "/help-center" },
+    { label: "FAQ", href: "#" },
+    { label: "Rewards Program", href: "#" },
+    { label: "Press", href: "#" },
+  ] as const;
+
   return (
     <footer
       style={{
@@ -20,8 +41,8 @@ export function MarketFooter() {
           margin: "0 auto",
           padding: "40px 20px 28px",
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-          gap: 32,
+            gridTemplateColumns: "minmax(220px, 1fr) repeat(3, minmax(180px, 1fr))",
+            gap: 52,
         }}
       >
         {/* Brand */}
@@ -67,182 +88,52 @@ export function MarketFooter() {
               marginTop: 2,
             }}
           >
-            The World's Largest Music
-            <br />
-            Prediction Market™
+            Predict the music. Win for knowing it.
           </p>
         </div>
 
-        {/* Markets by category */}
+        {/* Company */}
         <div>
           <p
             style={{
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: 700,
-              color: DS.accentGray,
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-              marginBottom: 14,
+              color: DS.textPrimary,
+              marginBottom: 18,
             }}
           >
-            Markets by category
+            Company
           </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-            {[
-              ["Awards", "Predictions"],
-              ["Streaming", "Predictions"],
-              ["Taylor Swift", "Predictions"],
-              ["Bad Bunny", "Predictions"],
-              ["AI Music", "Predictions"],
-              ["Fed", "Predictions"],
-            ].map(([label, sub]) => (
-              <div
-                key={label}
-                style={{
-                  padding: "6px 0",
-                  borderBottom: `1px solid ${DS.bgDarkGray}`,
-                  cursor: "pointer",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 12,
-                    color: DS.textPrimary,
-                    marginBottom: 1,
-                    transition: "color 0.12s",
-                  }}
-                  onMouseEnter={(event) => {
-                    event.currentTarget.style.color = DS.accentPrimary;
-                  }}
-                  onMouseLeave={(event) => {
-                    event.currentTarget.style.color = DS.textPrimary;
-                  }}
-                >
-                  {label}
-                </div>
-                <div style={{ fontSize: 10, color: DS.textSecondary }}>{sub}</div>
-              </div>
-            ))}
-            <button
-              type="button"
-              style={{
-                marginTop: 10,
-                padding: 0,
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontSize: 11,
-                color: DS.accentPrimary,
-                fontWeight: 600,
-                textAlign: "left",
-              }}
-              onMouseEnter={(event) => {
-                event.currentTarget.style.color = DS.accentMedium;
-              }}
-              onMouseLeave={(event) => {
-                event.currentTarget.style.color = DS.accentPrimary;
-              }}
-            >
-              View more ↓
-            </button>
-          </div>
-        </div>
 
-        {/* Topics */}
-        <div>
-          <p
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              color: DS.accentGray,
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-              marginBottom: 14,
-            }}
-          >
-            Topics
-          </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-            {[
-              ["Grammys 2026", "Predictions"],
-              ["Coachella 2026", "Predictions"],
-              ["Billboard Charts", "Predictions"],
-              ["Touring", "Predictions"],
-              ["Collabs", "Predictions"],
-              ["Vinyl Sales", "Predictions"],
-            ].map(([label, sub]) => (
-              <div
-                key={label}
-                style={{
-                  padding: "6px 0",
-                  borderBottom: `1px solid ${DS.bgDarkGray}`,
-                  cursor: "pointer",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 12,
-                    color: DS.textPrimary,
-                    marginBottom: 1,
-                    transition: "color 0.12s",
-                  }}
-                  onMouseEnter={(event) => {
-                    event.currentTarget.style.color = DS.accentPrimary;
-                  }}
-                  onMouseLeave={(event) => {
-                    event.currentTarget.style.color = DS.textPrimary;
-                  }}
-                >
-                  {label}
-                </div>
-                <div style={{ fontSize: 10, color: DS.textSecondary }}>{sub}</div>
-              </div>
-            ))}
-            <button
-              type="button"
-              style={{
-                marginTop: 10,
-                padding: 0,
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontSize: 11,
-                color: DS.accentPrimary,
-                fontWeight: 600,
-                textAlign: "left",
-              }}
-              onMouseEnter={(event) => {
-                event.currentTarget.style.color = DS.accentMedium;
-              }}
-              onMouseLeave={(event) => {
-                event.currentTarget.style.color = DS.accentPrimary;
-              }}
-            >
-              View more ↓
-            </button>
-          </div>
-        </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {companyLinks.map((link) => {
+              if (link.href.startsWith("/")) {
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    style={{
+                      fontSize: 12,
+                      color: DS.textSecondary,
+                      textDecoration: "none",
+                      transition: "color 0.12s",
+                    }}
+                    onMouseEnter={(event) => {
+                      event.currentTarget.style.color = DS.textPrimary;
+                    }}
+                    onMouseLeave={(event) => {
+                      event.currentTarget.style.color = DS.textSecondary;
+                    }}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              }
 
-        {/* Support & Social */}
-        <div>
-          <p
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              color: DS.accentGray,
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-              marginBottom: 14,
-            }}
-          >
-            Support &amp; Social
-          </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {["Learn", "𝕏 (Twitter)", "Instagram", "Discord", "TikTok", "News", "Contact us"].map(
-              (label) => (
+              return (
                 <a
-                  key={label}
-                  href="#"
+                  key={link.label}
+                  href={link.href}
                   onClick={(event) => event.preventDefault()}
                   style={{
                     fontSize: 12,
@@ -257,33 +148,55 @@ export function MarketFooter() {
                     event.currentTarget.style.color = DS.textSecondary;
                   }}
                 >
-                  {label}
+                  {link.label}
                 </a>
-              ),
-            )}
+              );
+            })}
           </div>
         </div>
 
-        {/* Marination Music links */}
+        {/* Social */}
         <div>
           <p
             style={{
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: 700,
-              color: DS.accentGray,
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-              marginBottom: 14,
+              color: DS.textPrimary,
+              marginBottom: 18,
             }}
           >
-            Marination Music
+            Social
           </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {["Rewards", "APIs", "Leaderboard", "Accuracy", "Brand", "Activity", "Careers", "Press"].map(
-              (label) => (
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {socialLinks.map((link) => {
+              if (link.href.startsWith("/")) {
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    style={{
+                      fontSize: 12,
+                      color: DS.textSecondary,
+                      textDecoration: "none",
+                      transition: "color 0.12s",
+                    }}
+                    onMouseEnter={(event) => {
+                      event.currentTarget.style.color = DS.textPrimary;
+                    }}
+                    onMouseLeave={(event) => {
+                      event.currentTarget.style.color = DS.textSecondary;
+                    }}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              }
+
+              return (
                 <a
-                  key={label}
-                  href="#"
+                  key={link.label}
+                  href={link.href}
                   onClick={(event) => event.preventDefault()}
                   style={{
                     fontSize: 12,
@@ -298,12 +211,76 @@ export function MarketFooter() {
                     event.currentTarget.style.color = DS.textSecondary;
                   }}
                 >
-                  {label}
+                  {link.label}
                 </a>
-              ),
-            )}
+              );
+            })}
           </div>
         </div>
+
+        {/* Product */}
+        <div>
+          <p
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              color: DS.textPrimary,
+              marginBottom: 18,
+            }}
+          >
+            Product
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {productLinks.map((link) => {
+              if (link.href.startsWith("/")) {
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    style={{
+                      fontSize: 12,
+                      color: DS.textSecondary,
+                      textDecoration: "none",
+                      transition: "color 0.12s",
+                    }}
+                    onMouseEnter={(event) => {
+                      event.currentTarget.style.color = DS.textPrimary;
+                    }}
+                    onMouseLeave={(event) => {
+                      event.currentTarget.style.color = DS.textSecondary;
+                    }}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              }
+
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={(event) => event.preventDefault()}
+                  style={{
+                    fontSize: 12,
+                    color: DS.textSecondary,
+                    textDecoration: "none",
+                    transition: "color 0.12s",
+                  }}
+                  onMouseEnter={(event) => {
+                    event.currentTarget.style.color = DS.textPrimary;
+                  }}
+                  onMouseLeave={(event) => {
+                    event.currentTarget.style.color = DS.textSecondary;
+                  }}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+
       </div>
 
       {/* Bottom bar */}
@@ -313,46 +290,41 @@ export function MarketFooter() {
           maxWidth: 1380,
           margin: "0 auto",
           padding: "14px 20px",
-          display: "flex",
+          display: "grid",
+          gridTemplateColumns: "1fr auto 1fr",
           alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
           gap: 10,
         }}
       >
         {/* Social icons */}
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 14 }}>
           {[
             { ic: "✉️", lb: "Email" },
-            { ic: "𝕏", lb: "Twitter" },
             { ic: "▶️", lb: "TikTok" },
-            { ic: "💬", lb: "Discord" },
-            { ic: "🎵", lb: "Music" },
+            { ic: "📷", lb: "Instagram" },
           ].map(({ ic, lb }) => (
             <button
               key={lb}
               type="button"
               title={lb}
               style={{
-                width: 30,
-                height: 30,
-                borderRadius: 7,
+                width: 22,
+                height: 22,
+                borderRadius: 6,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 fontSize: 13,
                 cursor: "pointer",
-                background: "#171724",
-                border: `1px solid ${DS.bgSurface}`,
+                background: "transparent",
+                border: "none",
                 color: DS.textSecondary,
                 transition: "all 0.12s",
               }}
               onMouseEnter={(event) => {
-                event.currentTarget.style.background = DS.bgSurface;
                 event.currentTarget.style.color = DS.textPrimary;
               }}
               onMouseLeave={(event) => {
-                event.currentTarget.style.background = "#171724";
                 event.currentTarget.style.color = DS.textSecondary;
               }}
             >
@@ -363,123 +335,8 @@ export function MarketFooter() {
 
         {/* Copyright */}
         <p style={{ fontSize: 10, color: DS.textSecondary, textAlign: "center" }}>
-          Adventure One QSS Inc. © 2026&nbsp;&nbsp;
-          {["Privacy", "Terms of Use", "Help Center", "Docs"].map((label, index) => (
-            <span key={label}>
-              {label === "Privacy" ? (
-                <Link
-                  href="/privacy-policy"
-                  style={{
-                    color: DS.accentGray,
-                    textDecoration: "none",
-                    transition: "color 0.12s",
-                  }}
-                  onMouseEnter={(event) => {
-                    event.currentTarget.style.color = DS.textSecondary;
-                  }}
-                  onMouseLeave={(event) => {
-                    event.currentTarget.style.color = DS.accentGray;
-                  }}
-                >
-                  {label}
-                </Link>
-              ) : label === "Terms of Use" ? (
-                <Link
-                  href="/terms-of-use"
-                  style={{
-                    color: DS.accentGray,
-                    textDecoration: "none",
-                    transition: "color 0.12s",
-                  }}
-                  onMouseEnter={(event) => {
-                    event.currentTarget.style.color = DS.textSecondary;
-                  }}
-                  onMouseLeave={(event) => {
-                    event.currentTarget.style.color = DS.accentGray;
-                  }}
-                >
-                  {label}
-                </Link>
-              ) : label === "Help Center" ? (
-                <Link
-                  href="/help-center"
-                  style={{
-                    color: DS.accentGray,
-                    textDecoration: "none",
-                    transition: "color 0.12s",
-                  }}
-                  onMouseEnter={(event) => {
-                    event.currentTarget.style.color = DS.textSecondary;
-                  }}
-                  onMouseLeave={(event) => {
-                    event.currentTarget.style.color = DS.accentGray;
-                  }}
-                >
-                  {label}
-                </Link>
-              ) : label === "Docs" ? (
-                <Link
-                  href="/docs"
-                  style={{
-                    color: DS.accentGray,
-                    textDecoration: "none",
-                    transition: "color 0.12s",
-                  }}
-                  onMouseEnter={(event) => {
-                    event.currentTarget.style.color = DS.textSecondary;
-                  }}
-                  onMouseLeave={(event) => {
-                    event.currentTarget.style.color = DS.accentGray;
-                  }}
-                >
-                  {label}
-                </Link>
-              ) : (
-                <a
-                  href="#"
-                  onClick={(event) => event.preventDefault()}
-                  style={{
-                    color: DS.accentGray,
-                    textDecoration: "none",
-                    transition: "color 0.12s",
-                  }}
-                  onMouseEnter={(event) => {
-                    event.currentTarget.style.color = DS.textSecondary;
-                  }}
-                  onMouseLeave={(event) => {
-                    event.currentTarget.style.color = DS.accentGray;
-                  }}
-                >
-                  {label}
-                </a>
-              )}
-              {index < 3 && <span style={{ margin: "0 6px", opacity: 0.35 }}>·</span>}
-            </span>
-          ))}
+          © 2026 MarinationMusic LLC.
         </p>
-
-        {/* Language */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ fontSize: 13 }}>🌐</span>
-          <select
-            defaultValue="English"
-            style={{
-              background: "#171724",
-              border: `1px solid ${DS.bgSurface}`,
-              color: DS.textSecondary,
-              fontSize: 11,
-              borderRadius: 5,
-              padding: "4px 8px",
-              cursor: "pointer",
-              outline: "none",
-            }}
-          >
-            <option>English</option>
-            <option>Español</option>
-            <option>Français</option>
-            <option>Português</option>
-          </select>
-        </div>
       </div>
 
       {/* Legal disclaimer */}
@@ -490,12 +347,46 @@ export function MarketFooter() {
           padding: "0 20px 24px",
         }}
       >
-        <p style={{ fontSize: 10, color: DS.textSecondary, lineHeight: 1.7 }}>
-          Marination Music operates globally and is provided by Adventure One QSS Inc., a US-based technology
-          company. This international platform is not regulated by the CFTC and may not accept persons from
-          certain jurisdictions. Prediction markets involve financial risk — please trade responsibly. This
-          platform is not intended as financial advice. Past performance of any market does not guarantee
-          future results. Participation is subject to applicable local laws and our Terms of Service.
+        <p style={{ fontSize: 10, color: DS.textSecondary, lineHeight: 1.7, textAlign: "center" }}>
+          Marination is operated by Marination Markets LLC, a Delaware limited liability company and wholly
+          owned subsidiary of MarinationMusic LLC. Marination is also a software-based music prediction
+          competition platform and is not regulated by the CFTC or any other financial regulatory body.
+          Participation involves risk of loss. Must be 18 or older. Not available in certain states. See
+          our{" "}
+          <Link
+            href="/terms-of-use"
+            style={{
+              color: DS.accentGray,
+              textDecoration: "none",
+              transition: "color 0.12s",
+            }}
+            onMouseEnter={(event) => {
+              event.currentTarget.style.color = DS.textSecondary;
+            }}
+            onMouseLeave={(event) => {
+              event.currentTarget.style.color = DS.accentGray;
+            }}
+          >
+            Terms of Use
+          </Link>
+          ,{" "}
+          <Link
+            href="/privacy-policy"
+            style={{
+              color: DS.accentGray,
+              textDecoration: "none",
+              transition: "color 0.12s",
+            }}
+            onMouseEnter={(event) => {
+              event.currentTarget.style.color = DS.textSecondary;
+            }}
+            onMouseLeave={(event) => {
+              event.currentTarget.style.color = DS.accentGray;
+            }}
+          >
+            Privacy Policy
+          </Link>
+          , and Platform Rule.
         </p>
       </div>
     </footer>
