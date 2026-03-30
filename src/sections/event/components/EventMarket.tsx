@@ -11,9 +11,14 @@ type EventMarketProps = {
 
 type EventTab = "comments" | "activity";
 
-function formatCurrency(amount: number) {
-  return `$${amount.toFixed(2)}`;
-}
+// Figma assets for the "Buy Pop Up" node (limited time CDN URLs).
+const imgDrake = "https://www.figma.com/api/mcp/asset/59814101-ba0f-4d36-8b28-beaad0d92f57";
+const imgKendrick = "https://www.figma.com/api/mcp/asset/9c3681b6-def0-4f2e-9a54-ba94bb588a82";
+const imgLine26 = "https://www.figma.com/api/mcp/asset/a7b1a422-c807-447e-8bdc-20718532c1ee";
+
+const accentDarkGray = "#171717";
+const presetBorder = "#444";
+const mutedLight = "#a1a1aa";
 
 function buildSeriesPath(points: number[], width: number, height: number, min: number, max: number) {
   if (points.length < 2) {
@@ -181,11 +186,11 @@ export function EventMarket(props: EventMarketProps) {
   const selectedOption =
     props.event.options.find(option => option.id === selectedOptionId) ?? props.event.options[0];
   const rewardMultiple = selectedOption ? 1 / (selectedOption.yesPriceCents / 100) : 1;
-  const potentialReward = amount > 0 ? amount * rewardMultiple : 0;
+  const potentialReward = amount > 0 ? (amount * rewardMultiple).toFixed(2) : "100";
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: DS.bgDarkest, color: DS.textPrimary }}>
-      <main className="mx-auto w-full max-w-3xl px-4 pb-10 pt-6 sm:px-6">
+      <main className="mx-auto w-full max-w-[1040px] px-4 pb-10 pt-6 sm:px-6">
         <p className="mb-2 text-sm" style={{ color: DS.accentGray }}>
           {props.event.category}
         </p>
@@ -194,218 +199,276 @@ export function EventMarket(props: EventMarketProps) {
           {props.event.summary}
         </p>
 
-        <MiniChart event={props.event} />
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+          <div className="flex-1 min-w-0">
+            <MiniChart event={props.event} />
 
-        <div className="mt-4 rounded-xl border p-4" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
-          <div className="mb-2 flex justify-end">
-            <span className="text-xs" style={{ color: DS.accentGray }}>
-              Odds
-            </span>
-          </div>
-          {props.event.options.map(option => (
-            <OptionRow
-              key={option.id}
-              option={option}
-              selectedOptionId={selectedOptionId}
-              onSelectYes={setSelectedOptionId}
-              onSelectNo={setSelectedOptionId}
-            />
-          ))}
-        </div>
-
-        <section className="mt-4 rounded-xl border p-4" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
-          <p className="mb-4 text-sm font-semibold">{props.event.title}</p>
-
-          <div className="mb-4 flex gap-2">
-            {props.event.options.map(option => (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => setSelectedOptionId(option.id)}
-                className="flex-1 rounded-lg border px-3 py-2 text-xs font-semibold"
-                style={{
-                  borderColor: selectedOptionId === option.id ? DS.success : DS.bgSurface,
-                  color: selectedOptionId === option.id ? DS.success : DS.textPrimary,
-                  background: selectedOptionId === option.id ? DS.successBg : "transparent",
-                }}
-              >
-                {option.name} {option.yesPriceCents}c
-              </button>
-            ))}
-          </div>
-
-          <div className="mb-3 flex items-end justify-between">
-            <p className="text-sm font-semibold">Amount</p>
-            <p className="text-3xl font-bold tabular-nums" style={{ color: DS.accentLightGray }}>
-              {formatCurrency(amount)}
-            </p>
-          </div>
-
-          <div className="mb-4 flex gap-2">
-            {[1, 20, 100].map(preset => (
-              <button
-                key={preset}
-                type="button"
-                onClick={() => setAmount(previous => previous + preset)}
-                className="flex-1 rounded-lg border px-3 py-2 text-xs font-semibold"
-                style={{ borderColor: DS.bgSurface }}
-              >
-                +${preset}
-              </button>
-            ))}
-          </div>
-
-          <div className="mb-4 flex items-end justify-between border-t pt-3" style={{ borderColor: DS.bgSurface }}>
-            <p className="text-sm font-semibold">Potential reward</p>
-            <p className="text-lg font-bold tabular-nums" style={{ color: DS.success }}>
-              {formatCurrency(potentialReward)}
-            </p>
-          </div>
-
-          <button
-            type="button"
-            className="w-full rounded-lg py-3 text-sm font-semibold"
-            style={{ background: DS.accentPrimary, color: DS.neutralDark }}
-          >
-            Submit
-          </button>
-        </section>
-
-        <section className="mt-4 rounded-xl border p-4" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
-          <h2 className="mb-2 text-xl font-bold">Rule summary</h2>
-          <p className="text-sm leading-6" style={{ color: DS.textSecondary }}>
-            {props.event.summary}
-          </p>
-          <p className="mt-2 text-sm leading-6" style={{ color: DS.textSecondary }}>
-            {props.event.notes}
-          </p>
-
-          <ul className="mt-3 space-y-2 text-sm leading-6" style={{ color: DS.textSecondary }}>
-            {props.event.rules.map(rule => (
-              <li key={rule}>- {rule}</li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="mt-4 rounded-xl border" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
-          <button
-            type="button"
-            onClick={() => setIsTimelineOpen(current => !current)}
-            className="flex w-full items-center justify-between px-4 py-3 text-left"
-          >
-            <span className="text-lg font-bold">Timeline and payout</span>
-            <span style={{ color: DS.accentGray }}>{isTimelineOpen ? "−" : "+"}</span>
-          </button>
-          {isTimelineOpen && (
-            <p className="border-t px-4 pb-4 pt-3 text-sm leading-6" style={{ borderColor: DS.bgSurface, color: DS.textSecondary }}>
-              {props.event.timelineAndPayout}
-            </p>
-          )}
-        </section>
-
-        <section className="mt-3 rounded-xl border" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
-          <button
-            type="button"
-            onClick={() => setIsProhibitionsOpen(current => !current)}
-            className="flex w-full items-center justify-between px-4 py-3 text-left"
-          >
-            <span className="text-lg font-bold">Predicting prohibitions</span>
-            <span style={{ color: DS.accentGray }}>{isProhibitionsOpen ? "−" : "+"}</span>
-          </button>
-          {isProhibitionsOpen && (
-            <p className="border-t px-4 pb-4 pt-3 text-sm leading-6" style={{ borderColor: DS.bgSurface, color: DS.textSecondary }}>
-              {props.event.prohibitions}
-            </p>
-          )}
-        </section>
-
-        <section className="mt-4 rounded-xl border p-4" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
-          <h2 className="mb-2 text-xl font-bold">People also predicting</h2>
-          <div className="space-y-3">
-            {props.event.relatedMarkets.map(market => (
-              <div key={market.id} className="rounded-lg border p-3" style={{ borderColor: DS.bgSurface }}>
-                <p className="text-xs uppercase tracking-wide" style={{ color: DS.accentGray }}>
-                  {market.category}
-                </p>
-                <p className="mt-1 text-sm">{market.title}</p>
+            <div className="mt-4 rounded-xl border p-4" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
+              <div className="mb-2 flex justify-end">
+                <span className="text-xs" style={{ color: DS.accentGray }}>
+                  Odds
+                </span>
               </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-4 rounded-xl border p-4" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
-          <div className="mb-4 flex gap-6 border-b" style={{ borderColor: DS.bgSurface }}>
-            <button
-              type="button"
-              onClick={() => setActiveTab("comments")}
-              className="pb-2 text-lg font-bold"
-              style={{
-                color: activeTab === "comments" ? DS.textPrimary : DS.accentGray,
-                borderBottom: `2px solid ${activeTab === "comments" ? DS.accentPrimary : "transparent"}`,
-              }}
-            >
-              Comments
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("activity")}
-              className="pb-2 text-lg font-bold"
-              style={{
-                color: activeTab === "activity" ? DS.textPrimary : DS.accentGray,
-                borderBottom: `2px solid ${activeTab === "activity" ? DS.accentPrimary : "transparent"}`,
-              }}
-            >
-              Activity
-            </button>
-          </div>
-
-          <div className="mb-4 flex gap-2 rounded-xl border p-2" style={{ borderColor: DS.bgSurface }}>
-            <input
-              value={comment}
-              onChange={event => setComment(event.target.value)}
-              placeholder="Add a comment"
-              className="w-full bg-transparent px-2 text-sm outline-none"
-              style={{ color: DS.textPrimary }}
-            />
-            <button
-              type="button"
-              className="rounded-lg px-3 py-1.5 text-xs font-semibold"
-              style={{ background: DS.accentPrimary, color: DS.neutralDark }}
-            >
-              Post
-            </button>
-          </div>
-
-          {activeTab === "comments" ? (
-            <div className="space-y-3">
-              {props.event.comments.map(item => (
-                <div key={item.id} className="flex gap-3 rounded-lg border p-3" style={{ borderColor: DS.bgSurface }}>
-                  <Avatar
-                    label={item.avatarLabel}
-                    startColor={item.avatarStartColor}
-                    endColor={item.avatarEndColor}
-                    size={32}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="truncate text-sm font-semibold">{item.username}</p>
-                      <p className="text-xs" style={{ color: DS.accentGray }}>
-                        {item.timeAgo}
-                      </p>
-                    </div>
-                    <p className="mt-1 text-sm" style={{ color: DS.textSecondary }}>
-                      {item.pick}
-                    </p>
-                  </div>
-                </div>
+              {props.event.options.map(option => (
+                <OptionRow
+                  key={option.id}
+                  option={option}
+                  selectedOptionId={selectedOptionId}
+                  onSelectYes={setSelectedOptionId}
+                  onSelectNo={setSelectedOptionId}
+                />
               ))}
             </div>
-          ) : (
-            <p className="text-sm" style={{ color: DS.textSecondary }}>
-              Recent order and fill activity will appear here.
-            </p>
-          )}
-        </section>
+
+            <section className="mt-4 rounded-xl border p-4" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
+              <h2 className="mb-2 text-xl font-bold">Rule summary</h2>
+              <p className="text-sm leading-6" style={{ color: DS.textSecondary }}>
+                {props.event.summary}
+              </p>
+              <p className="mt-2 text-sm leading-6" style={{ color: DS.textSecondary }}>
+                {props.event.notes}
+              </p>
+
+              <ul className="mt-3 space-y-2 text-sm leading-6" style={{ color: DS.textSecondary }}>
+                {props.event.rules.map(rule => (
+                  <li key={rule}>- {rule}</li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="mt-4 rounded-xl border" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
+              <button
+                type="button"
+                onClick={() => setIsTimelineOpen(current => !current)}
+                className="flex w-full items-center justify-between px-4 py-3 text-left"
+              >
+                <span className="text-lg font-bold">Timeline and payout</span>
+                <span style={{ color: DS.accentGray }}>{isTimelineOpen ? "−" : "+"}</span>
+              </button>
+              {isTimelineOpen && (
+                <p className="border-t px-4 pb-4 pt-3 text-sm leading-6" style={{ borderColor: DS.bgSurface, color: DS.textSecondary }}>
+                  {props.event.timelineAndPayout}
+                </p>
+              )}
+            </section>
+
+            <section className="mt-3 rounded-xl border" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
+              <button
+                type="button"
+                onClick={() => setIsProhibitionsOpen(current => !current)}
+                className="flex w-full items-center justify-between px-4 py-3 text-left"
+              >
+                <span className="text-lg font-bold">Predicting prohibitions</span>
+                <span style={{ color: DS.accentGray }}>{isProhibitionsOpen ? "−" : "+"}</span>
+              </button>
+              {isProhibitionsOpen && (
+                <p className="border-t px-4 pb-4 pt-3 text-sm leading-6" style={{ borderColor: DS.bgSurface, color: DS.textSecondary }}>
+                  {props.event.prohibitions}
+                </p>
+              )}
+            </section>
+
+            <section className="mt-4 rounded-xl border p-4" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
+              <h2 className="mb-2 text-xl font-bold">People also predicting</h2>
+              <div className="space-y-3">
+                {props.event.relatedMarkets.map(market => (
+                  <div key={market.id} className="rounded-lg border p-3" style={{ borderColor: DS.bgSurface }}>
+                    <p className="text-xs uppercase tracking-wide" style={{ color: DS.accentGray }}>
+                      {market.category}
+                    </p>
+                    <p className="mt-1 text-sm">{market.title}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="mt-4 rounded-xl border p-4" style={{ borderColor: DS.bgSurface, background: DS.bgDark }}>
+              <div className="mb-4 flex gap-6 border-b" style={{ borderColor: DS.bgSurface }}>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("comments")}
+                  className="pb-2 text-lg font-bold"
+                  style={{
+                    color: activeTab === "comments" ? DS.textPrimary : DS.accentGray,
+                    borderBottom: `2px solid ${activeTab === "comments" ? DS.accentPrimary : "transparent"}`,
+                  }}
+                >
+                  Comments
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("activity")}
+                  className="pb-2 text-lg font-bold"
+                  style={{
+                    color: activeTab === "activity" ? DS.textPrimary : DS.accentGray,
+                    borderBottom: `2px solid ${activeTab === "activity" ? DS.accentPrimary : "transparent"}`,
+                  }}
+                >
+                  Activity
+                </button>
+              </div>
+
+              <div className="mb-4 flex gap-2 rounded-xl border p-2" style={{ borderColor: DS.bgSurface }}>
+                <input
+                  value={comment}
+                  onChange={event => setComment(event.target.value)}
+                  placeholder="Add a comment"
+                  className="w-full bg-transparent px-2 text-sm outline-none"
+                  style={{ color: DS.textPrimary }}
+                />
+                <button
+                  type="button"
+                  className="rounded-lg px-3 py-1.5 text-xs font-semibold"
+                  style={{ background: DS.accentPrimary, color: DS.neutralDark }}
+                >
+                  Post
+                </button>
+              </div>
+
+              {activeTab === "comments" ? (
+                <div className="space-y-3">
+                  {props.event.comments.map(item => (
+                    <div key={item.id} className="flex gap-3 rounded-lg border p-3" style={{ borderColor: DS.bgSurface }}>
+                      <Avatar
+                        label={item.avatarLabel}
+                        startColor={item.avatarStartColor}
+                        endColor={item.avatarEndColor}
+                        size={32}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="truncate text-sm font-semibold">{item.username}</p>
+                          <p className="text-xs" style={{ color: DS.accentGray }}>
+                            {item.timeAgo}
+                          </p>
+                        </div>
+                        <p className="mt-1 text-sm" style={{ color: DS.textSecondary }}>
+                          {item.pick}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm" style={{ color: DS.textSecondary }}>
+                  Recent order and fill activity will appear here.
+                </p>
+              )}
+            </section>
+          </div>
+
+          <div className="hidden lg:block lg:w-[378px] lg:shrink-0">
+            <section
+              className="mt-4 w-full max-w-[378px] overflow-hidden rounded-[10px] border"
+              style={{
+                borderColor: accentDarkGray,
+                background: DS.bgDark,
+                fontFamily:
+                  "-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',system-ui,sans-serif",
+              }}
+            >
+              <div className="px-4 pt-3">
+                <div className="flex items-start gap-3">
+                  <div className="relative h-[66px] w-[80px] shrink-0">
+                    <div className="absolute left-0 top-0 h-[66px] w-[40px] overflow-hidden rounded-tr-[8px] rounded-br-[8px]">
+                      <img
+                        src={imgDrake}
+                        alt=""
+                        className="absolute inset-0 h-full w-full object-cover pointer-events-none"
+                        style={{ transform: "scaleY(-1) rotate(180deg)" }}
+                      />
+                    </div>
+                    <div className="absolute right-0 top-0 h-[66px] w-[40px] overflow-hidden rounded-tr-[8px] rounded-br-[8px]">
+                      <img
+                        src={imgKendrick}
+                        alt=""
+                        className="absolute inset-0 h-full w-full object-cover pointer-events-none"
+                      />
+                    </div>
+                  </div>
+
+                  <p className="pt-[6px] text-[16px] font-semibold leading-[21px] tracking-[-0.31px]" style={{ color: DS.textPrimary }}>
+                    {props.event.title}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 px-4">
+                <div className="flex gap-3">
+                  {props.event.options.map(option => {
+                    const isSelected = selectedOptionId === option.id;
+                    const isDrake = option.id === "drake";
+
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => setSelectedOptionId(option.id)}
+                        className="h-[42px] flex-1 rounded-[8px] border px-2 text-center text-[13px] font-semibold leading-[18px] tracking-[-0.08px]"
+                        style={{
+                          borderColor: isDrake ? DS.success : DS.error,
+                          color: isDrake ? DS.success : DS.error,
+                          background: isSelected ? (isDrake ? DS.successBg : DS.dangerBg) : "transparent",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {option.name} {option.yesPriceCents}¢
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="mt-6 px-4">
+                <div className="flex items-end justify-between">
+                  <p className="text-[16px] font-semibold leading-[21px] tracking-[-0.31px]" style={{ color: DS.textPrimary }}>
+                    Amount
+                  </p>
+                  <p className="text-[34px] font-bold leading-[41px] tracking-[0.4px] tabular-nums" style={{ color: mutedLight }}>
+                    ${amount}
+                  </p>
+                </div>
+
+                <div className="mt-3 flex items-center justify-center gap-4">
+                  {[1, 20, 100].map(preset => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setAmount(previous => previous + preset)}
+                      className="h-[42px] w-[52px] rounded-[8px] border text-center text-[13px] font-semibold leading-[18px] tracking-[-0.08px]"
+                      style={{
+                        borderColor: presetBorder,
+                        color: DS.textPrimary,
+                        background: "transparent",
+                        cursor: "pointer",
+                      }}
+                    >
+                      +${preset}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <img src={imgLine26} alt="" className="mt-4 h-px w-full object-cover" />
+
+              <div className="px-4 pb-4 pt-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-[16px] font-semibold leading-[21px] tracking-[-0.31px]" style={{ color: DS.textPrimary }}>
+                    Potential Reward
+                  </p>
+                  <p className="text-[22px] font-bold leading-[28px] tracking-[-0.26px] tabular-nums" style={{ color: DS.success }}>
+                    ${potentialReward}
+                  </p>
+                </div>
+
+                <p className="mt-4 pb-[2px] text-center text-[11px] leading-[13px] tracking-[0.06px]" style={{ color: mutedLight }}>
+                  By clicking submit, you agree to the{" "}
+                  <span className="decoration-solid underline">Terms of Use.</span>
+                </p>
+              </div>
+            </section>
+          </div>
+        </div>
       </main>
 
       <MarketFooter />
