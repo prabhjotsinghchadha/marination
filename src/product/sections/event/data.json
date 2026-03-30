@@ -3,7 +3,7 @@
     {
       "slug": "drake-vs-kendrick-streams-24h",
       "category": "Artist battles",
-      "title": "Drake vs Kendrick Lamar: who gets more streams in the next 24 hours?",
+      "title": "Drake Vs. Kendrick Lamar: Who hits more streams in the next 24 hours?",
       "summary": "If Drake records more verified combined streams than Kendrick Lamar in the 24-hour measurement window, this market resolves to Drake.",
       "notes": "This event is mutually exclusive and resolves from official published data sources.",
       "rules": [
@@ -26,7 +26,7 @@
         },
         {
           "id": "kendrick",
-          "name": "Kendrick Lamar",
+          "name": "Kendrick",
           "probability": 45,
           "yesPriceCents": 45,
           "noPriceCents": 55,
