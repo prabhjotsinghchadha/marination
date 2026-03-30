@@ -31,12 +31,7 @@ export function AppShellProvider(props: AppShellProviderProps) {
     <AppShell
       navigationItems={navigationItems}
       walletBalance={1250}
-      user={{ name: "Alex Morgan" }}
       onNavigate={(href) => router.push(href)}
-      onLogout={() => {
-        // TODO: wire to auth
-        router.push("/logout");
-      }}
     >
       {children}
     </AppShell>

@@ -1,10 +1,10 @@
-import { LogOut } from "lucide-react";
 import { DS } from "@/product/design-system/colors";
 import type { AppShellUser } from "./AppShell";
+import type { ReactNode } from "react";
 
 interface UserMenuProps {
   user?: AppShellUser;
-  onLogout?: () => void;
+  action?: ReactNode;
 }
 
 function getInitials(name: string): string {
@@ -17,7 +17,7 @@ function getInitials(name: string): string {
 }
 
 export function UserMenu(props: UserMenuProps) {
-  const { user, onLogout } = props;
+  const { user, action } = props;
   const initials = user?.name ? getInitials(user.name) : "U";
 
   return (
@@ -50,15 +50,7 @@ export function UserMenu(props: UserMenuProps) {
         {user?.name ?? "Guest"}
       </span>
 
-      <button
-        type="button"
-        onClick={onLogout}
-        title="Log out"
-        className="p-1.5 rounded-md transition-colors shrink-0"
-        style={{ color: DS.textSecondary }}
-      >
-        <LogOut size={14} />
-      </button>
+      {action}
     </div>
   );
 }
