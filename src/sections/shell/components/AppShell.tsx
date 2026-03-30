@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { DS } from "@/product/design-system/colors";
 import { MainNav } from "./MainNav";
-import { UserMenu } from "./UserMenu";
+import { ClerkUserMenu } from "./auth/ClerkUserMenu";
 import Image from "next/image";
 
 export interface NavigationItem {
@@ -19,14 +19,12 @@ export interface AppShellUser {
 export interface AppShellProps {
   children: React.ReactNode;
   navigationItems: NavigationItem[];
-  user?: AppShellUser;
   walletBalance?: number;
   onNavigate?: (href: string) => void;
-  onLogout?: () => void;
 }
 
 export function AppShell(props: AppShellProps) {
-  const { children, navigationItems, user, walletBalance, onNavigate, onLogout } = props;
+  const { children, navigationItems, walletBalance, onNavigate } = props;
 
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -115,7 +113,7 @@ export function AppShell(props: AppShellProps) {
           )}
 
           <div className="hidden md:block">
-            <UserMenu user={user} onLogout={onLogout} />
+            <ClerkUserMenu />
           </div>
 
           <button
@@ -187,7 +185,7 @@ export function AppShell(props: AppShellProps) {
                     </span>
                   </div>
                 )}
-                <UserMenu user={user} onLogout={onLogout} />
+                <ClerkUserMenu />
               </div>
             </div>
           </div>
