@@ -36,13 +36,14 @@ export function MarketFooter() {
     >
       {/* Main grid */}
       <div
+        className="market-footer-main-grid"
         style={{
           maxWidth: 1380,
           margin: "0 auto",
           padding: "40px 20px 28px",
           display: "grid",
-            gridTemplateColumns: "minmax(220px, 1fr) repeat(3, minmax(180px, 1fr))",
-            gap: 52,
+          gridTemplateColumns: "1fr",
+          gap: 32,
         }}
       >
         {/* Brand */}
@@ -285,19 +286,20 @@ export function MarketFooter() {
 
       {/* Bottom bar */}
       <div
+        className="market-footer-bottom-bar"
         style={{
           borderTop: `1px solid ${DS.bgDarkGray}`,
           maxWidth: 1380,
           margin: "0 auto",
           padding: "14px 20px",
-          display: "grid",
-          gridTemplateColumns: "1fr auto 1fr",
+          display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           gap: 10,
         }}
       >
         {/* Social icons */}
-        <div style={{ display: "flex", gap: 14 }}>
+        <div className="market-footer-social-icons" style={{ display: "flex", gap: 14 }}>
           {[
             { ic: "✉️", lb: "Email" },
             { ic: "▶️", lb: "TikTok" },
@@ -338,6 +340,44 @@ export function MarketFooter() {
           © 2026 MarinationMusic LLC.
         </p>
       </div>
+
+      <style jsx>{`
+        .market-footer-main-grid {
+          width: 100%;
+        }
+
+        .market-footer-bottom-bar {
+          justify-content: center;
+        }
+
+        .market-footer-social-icons {
+          justify-content: center;
+        }
+
+        @media (min-width: 640px) {
+          .market-footer-main-grid {
+            grid-template-columns: repeat(2, minmax(180px, 1fr)) !important;
+            gap: 40px !important;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .market-footer-main-grid {
+            grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(180px, 1fr)) !important;
+            gap: 52px !important;
+          }
+
+          .market-footer-bottom-bar {
+            display: grid !important;
+            grid-template-columns: 1fr auto 1fr !important;
+            align-items: center;
+          }
+
+          .market-footer-social-icons {
+            justify-content: flex-start;
+          }
+        }
+      `}</style>
 
       {/* Legal disclaimer */}
       <div
