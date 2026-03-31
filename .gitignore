@@ -32,11 +32,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
-.env*.local
-
-# Sentry Config File
-.env.sentry-build-plugin
+# Environment — secrets; never commit (commit `.env.example` with placeholders only)
+.env*
+!.env.example
 
 # local folder
 local
@@ -60,5 +58,3 @@ build-archive.log
 /test-results/
 /playwright-report/
 /playwright/.cache/
-.env
-.env.production
