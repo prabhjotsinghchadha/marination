@@ -1,56 +1,13 @@
-import { eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import type { WebhookEvent } from '@clerk/nextjs/server';
+import { syncClerkUserFromWebhookPayload, type ClerkWebhookUserPayload } from '@/libs/ClerkUserSync';
 import { db } from '@/libs/DB';
 import { Env } from '@/libs/Env';
 import { logger } from '@/libs/Logger';
 import { users } from '@/models/Schema';
-
-type ClerkUserPayload = {
-  id: string;
-  first_name: string | null;
-  last_name: string | null;
-  username: string | null;
-  primary_email_address_id: string | null;
-  email_addresses: Array<{
-    id: string;
-    email_address: string;
-  }>;
-};
-
-function getDisplayNameFromEvent(data: ClerkUserPayload): string {
-  const firstName = data.first_name?.trim();
-  const lastName = data.last_name?.trim();
-  const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
-
-  if (fullName) {
-    return fullName;
-  }
-
-  const username = data.username?.trim();
-
-  if (username) {
-    return username;
-  }
-
-  const primaryEmail = data.email_addresses.find(
-    email => email.id === data.primary_email_address_id,
-  )?.email_address;
-
-  if (primaryEmail) {
-    return primaryEmail.split('@')[0] ?? 'User';
-  }
-
-  return 'User';
-}
-
-function getPrimaryEmailFromEvent(data: ClerkUserPayload): string | null {
-  return data.email_addresses.find(
-    email => email.id === data.primary_email_address_id,
-  )?.email_address ?? null;
-}
 
 export const POST = async (request: Request) => {
   const signingSecret = Env.CLERK_WEBHOOK_SIGNING_SECRET;
@@ -84,26 +41,9 @@ export const POST = async (request: Request) => {
   }
 
   if (event.type === 'user.created' || event.type === 'user.updated') {
-    const data = event.data as ClerkUserPayload;
-    const email = getPrimaryEmailFromEvent(data);
-    const displayName = getDisplayNameFromEvent(data);
+    const data = event.data as ClerkWebhookUserPayload;
 
-    await db
-      .insert(users)
-      .values({
-        authProvider: 'clerk',
-        authSubject: data.id,
-        email,
-        displayName,
-      })
-      .onConflictDoUpdate({
-        target: users.authSubject,
-        set: {
-          email,
-          displayName,
-          updatedAt: sql`now()`,
-        },
-      });
+    await syncClerkUserFromWebhookPayload(data);
 
     logger.info('Clerk user synced to Neon', {
       eventType: event.type,
@@ -125,4 +65,3 @@ export const POST = async (request: Request) => {
 
   return NextResponse.json({ ok: true });
 };
-
