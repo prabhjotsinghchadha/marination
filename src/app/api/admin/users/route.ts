@@ -1,12 +1,11 @@
 import { count, desc, sql } from "drizzle-orm";
-import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+import { parseUserRole, requireStaffApi } from "@/libs/adminStaff";
 import { db } from "@/libs/DB";
-import { syncClerkUserFromClerkUser } from "@/libs/ClerkUserSync";
 import { trades, userCollateralBalances, users } from "@/models/Schema";
 
-import type { AdminAuthProvider, AdminUser } from "@/product/sections/admin-dashboard/types";
+import type { AdminAuthProvider, AdminUser, AdminUsersViewer } from "@/product/sections/admin-dashboard/types";
 
 const USDC_DECIMALS = 6;
 
@@ -26,12 +25,17 @@ function parseAuthProvider(raw: string): AdminAuthProvider {
  * Lists users for the admin dashboard with balances and trade counts.
  */
 export const GET = async () => {
-  const user = await currentUser();
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const gate = await requireStaffApi();
+  if (!gate.ok) {
+    return gate.response;
   }
 
-  await syncClerkUserFromClerkUser(user);
+  const viewerRole = parseUserRole(gate.ctx.dbUser.role);
+  const viewer: AdminUsersViewer = {
+    id: gate.ctx.dbUser.id,
+    role: viewerRole,
+    canAssignRoles: viewerRole === "admin",
+  };
 
   const userRows = await db
     .select({
@@ -39,6 +43,7 @@ export const GET = async () => {
       displayName: users.displayName,
       email: users.email,
       authProvider: users.authProvider,
+      role: users.role,
       createdAt: users.createdAt,
     })
     .from(users)
@@ -81,6 +86,7 @@ export const GET = async () => {
       displayName: row.displayName,
       email: row.email ?? "—",
       authProvider: parseAuthProvider(row.authProvider),
+      role: parseUserRole(row.role),
       balance: atomicToUsd(available),
       reserved: atomicToUsd(reserved),
       trades: tradeCountByUser.get(row.id) ?? 0,
@@ -88,5 +94,5 @@ export const GET = async () => {
     };
   });
 
-  return NextResponse.json({ users: payload });
+  return NextResponse.json({ users: payload, viewer });
 };

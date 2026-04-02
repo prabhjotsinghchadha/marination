@@ -42,6 +42,12 @@ export const counterSchema = pgTable('counter', {
 // Users + Assets
 // =============================================================================
 
+/** Application role for dashboard access and moderation. Stored as lowercase text. */
+export const USER_ROLES = ['admin', 'moderator', 'user'] as const;
+
+/** New Clerk signups get this role unless `ADMIN_EMAILS` promotes them to `admin`. */
+export const DEFAULT_USER_ROLE: (typeof USER_ROLES)[number] = 'user';
+
 export const users = pgTable(
   'users',
   {
@@ -50,6 +56,8 @@ export const users = pgTable(
     authSubject: text('auth_subject').notNull().unique(),
     email: text('email').unique(),
     displayName: text('display_name').notNull(),
+    /** `admin` and `moderator` may use the staff dashboard; default is {@link DEFAULT_USER_ROLE} (trader). */
+    role: text('role').notNull().default(DEFAULT_USER_ROLE),
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -58,7 +66,13 @@ export const users = pgTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (t) => [check('users_display_name_not_empty', sql`${t.displayName} <> ''`)],
+  (t) => [
+    check('users_display_name_not_empty', sql`${t.displayName} <> ''`),
+    check(
+      'users_role_valid',
+      sql`${t.role} IN ('admin', 'moderator', 'user')`,
+    ),
+  ],
 );
 
 /**

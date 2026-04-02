@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import data from "@/product/sections/market-discovery/data.json";
-import type { SortOption, Market } from "@/product/sections/market-discovery/types";
+import type { Market } from "@/product/sections/market-discovery/types";
+import { useDiscoverSearch } from "@/sections/shell/DiscoverSearchContext";
 import { MarketDiscovery } from "./components/MarketDiscovery";
 
 const expandedMarkets = [
@@ -20,10 +21,21 @@ const expandedMarkets = [
 
 export function MarketDiscoverySection() {
   const [activeCategory, setActiveCategory] = useState<string>("All");
-  const [activeSort, setActiveSort] = useState<SortOption>("trending");
   const [activeFilterPill, setActiveFilterPill] = useState<string>("All");
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+  const {
+    searchQuery,
+    setSearchQuery,
+    setDiscoverSearchActive,
+  } = useDiscoverSearch();
+
+  useEffect(() => {
+    setDiscoverSearchActive(true);
+    return () => {
+      setDiscoverSearchActive(false);
+      setSearchQuery("");
+    };
+  }, [setDiscoverSearchActive, setSearchQuery]);
 
   const handleLoadMore = () => {
     setIsLoadingMore(true);
@@ -35,9 +47,7 @@ export function MarketDiscoverySection() {
       markets={expandedMarkets}
       categories={data.categories}
       filterPills={data.filterPills}
-      sortOptions={data.sortOptions as any}
       activeCategory={activeCategory}
-      activeSort={activeSort}
       activeFilterPill={activeFilterPill}
       searchQuery={searchQuery}
       isLoadingMore={isLoadingMore}
@@ -46,7 +56,6 @@ export function MarketDiscoverySection() {
       hotTopics={data.hotTopics}
       onSearchChange={setSearchQuery}
       onCategoryChange={setActiveCategory}
-      onSortChange={setActiveSort}
       onFilterPillChange={setActiveFilterPill}
       onMarketClick={(id) => console.log("View market:", id)}
       onYesClick={(id, index) => console.log("YES on market:", id, "outcome:", index)}

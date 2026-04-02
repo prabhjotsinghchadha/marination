@@ -15,6 +15,13 @@
       "when": 1773851841186,
       "tag": "0001_modern_warbird",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775161861269,
+      "tag": "0002_supreme_blockbuster",
+      "breakpoints": true
     }
   ]
 }

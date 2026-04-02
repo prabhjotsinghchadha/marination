@@ -2,7 +2,8 @@ import { sql } from 'drizzle-orm';
 import { currentUser, type User } from '@clerk/nextjs/server';
 import { cache } from 'react';
 import { db } from '@/libs/DB';
-import { users } from '@/models/Schema';
+import { isPlatformAdminEmail } from '@/libs/platformAdminEmails';
+import { DEFAULT_USER_ROLE, users } from '@/models/Schema';
 
 /** Shape of `event.data` for Clerk `user.created` / `user.updated` webhooks (snake_case). */
 export type ClerkWebhookUserPayload = {
@@ -57,13 +58,15 @@ function primaryEmailFromClerkUser(user: User): string | null {
 
 /**
  * Inserts or updates the Neon `users` row for a Clerk identity.
- * Idempotent on `auth_subject`.
+ * Idempotent on `auth_subject`. New rows use {@link DEFAULT_USER_ROLE} unless the email is in `ADMIN_EMAILS`.
  */
 export async function upsertClerkUserInDb(props: {
   authSubject: string;
   email: string | null;
   displayName: string;
 }) {
+  const grantAdmin = isPlatformAdminEmail(props.email);
+
   await db
     .insert(users)
     .values({
@@ -71,6 +74,7 @@ export async function upsertClerkUserInDb(props: {
       authSubject: props.authSubject,
       email: props.email,
       displayName: props.displayName,
+      role: grantAdmin ? 'admin' : DEFAULT_USER_ROLE,
     })
     .onConflictDoUpdate({
       target: users.authSubject,
@@ -78,6 +82,7 @@ export async function upsertClerkUserInDb(props: {
         email: props.email,
         displayName: props.displayName,
         updatedAt: sql`now()`,
+        ...(grantAdmin ? { role: 'admin' } : {}),
       },
     });
 }

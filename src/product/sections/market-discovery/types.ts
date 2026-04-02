@@ -59,9 +59,7 @@ export interface MarketDiscoveryProps {
   markets: Market[];
   categories: string[];
   filterPills: string[];
-  sortOptions: SortOptionItem[];
   activeCategory: string;
-  activeSort: SortOption;
   activeFilterPill: string;
   searchQuery: string;
   isLoadingMore: boolean;
@@ -70,7 +68,6 @@ export interface MarketDiscoveryProps {
   hotTopics: HotTopic[];
   onSearchChange: (query: string) => void;
   onCategoryChange: (category: string) => void;
-  onSortChange: (sort: SortOption) => void;
   onFilterPillChange: (pill: string) => void;
   onMarketClick: (marketId: string) => void;
   /** outcomeIndex is provided for multi-outcome markets */

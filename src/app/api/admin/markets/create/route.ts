@@ -1,13 +1,12 @@
 import { eq } from "drizzle-orm";
-import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import * as z from "zod";
 
+import { requireStaffApi } from "@/libs/adminStaff";
 import { db } from "@/libs/DB";
-import { syncClerkUserFromClerkUser } from "@/libs/ClerkUserSync";
 import { createMarket, getMarketAtomicState } from "@/libs/amm";
 import { buildEventDetailsFromCreateRequest } from "@/libs/marketEventDetails";
-import { assets, marketCpmmBinaryState, marketEvents, marketOutcomes, markets, users } from "@/models/Schema";
+import { assets, marketCpmmBinaryState, marketEvents, marketOutcomes, markets } from "@/models/Schema";
 
 const EVENT_TYPE_MARKET_CREATED = "MARKET_CREATED";
 
@@ -40,22 +39,12 @@ export const POST = async (request: Request) => {
     return NextResponse.json(z.treeifyError(parse.error), { status: 422 });
   }
 
-  const user = await currentUser();
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const gate = await requireStaffApi();
+  if (!gate.ok) {
+    return gate.response;
   }
 
-  // Ensure the Clerk user row exists in Neon before we reference it.
-  await syncClerkUserFromClerkUser(user);
-
-  const dbUser = await db.query.users.findFirst({
-    where: eq(users.authSubject, user.id),
-    columns: { id: true },
-  });
-
-  if (!dbUser) {
-    return NextResponse.json({ message: "User not found in database" }, { status: 500 });
-  }
+  const dbUser = { id: gate.ctx.dbUser.id };
 
   const body: CreateMarketRequestBody = parse.data;
 

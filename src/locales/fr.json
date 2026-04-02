@@ -76,5 +76,8 @@
   },
   "LocaleSwitcher": {
     "change_language": "Changer de langue"
+  },
+  "AdminDashboardPage": {
+    "sidebar_section_label": "Panneau d'administration"
   }
 }

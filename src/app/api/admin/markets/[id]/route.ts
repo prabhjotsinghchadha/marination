@@ -1,10 +1,9 @@
 import { and, asc, eq, ne } from "drizzle-orm";
-import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import * as z from "zod";
 
+import { requireStaffApi } from "@/libs/adminStaff";
 import { db } from "@/libs/DB";
-import { syncClerkUserFromClerkUser } from "@/libs/ClerkUserSync";
 import { buildEventDetailsFromCreateRequest } from "@/libs/marketEventDetails";
 import { marketCpmmBinaryState, marketEvents, marketOutcomes, markets } from "@/models/Schema";
 
@@ -31,9 +30,9 @@ function atomicPoolsToInitialLiquidityUsd(yesPool: bigint | null | undefined, no
  * Returns one market for admin edit (draft details + pool-derived liquidity).
  */
 export const GET = async (_request: Request, context: { params: Promise<{ id: string }> }) => {
-  const user = await currentUser();
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const gate = await requireStaffApi();
+  if (!gate.ok) {
+    return gate.response;
   }
 
   const { id } = await context.params;
@@ -95,12 +94,10 @@ export const GET = async (_request: Request, context: { params: Promise<{ id: st
  * Publishes a draft market (`action: "publish"`) or updates draft copy/outcome labels.
  */
 export const PATCH = async (request: Request, context: { params: Promise<{ id: string }> }) => {
-  const user = await currentUser();
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const gate = await requireStaffApi();
+  if (!gate.ok) {
+    return gate.response;
   }
-
-  await syncClerkUserFromClerkUser(user);
 
   const { id } = await context.params;
   const json = await request.json();

@@ -1,7 +1,7 @@
 import { count, desc, eq } from "drizzle-orm";
-import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+import { requireStaffApi } from "@/libs/adminStaff";
 import { db } from "@/libs/DB";
 import {
   marketCpmmBinaryState,
@@ -35,9 +35,9 @@ function parseResolvedOutcome(key: string | null | undefined): AdminResolvedOutc
  * Lists markets for the admin dashboard (Neon-backed).
  */
 export const GET = async () => {
-  const user = await currentUser();
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const gate = await requireStaffApi();
+  if (!gate.ok) {
+    return gate.response;
   }
 
   const tradeRows = await db

@@ -76,5 +76,8 @@
   },
   "LocaleSwitcher": {
     "change_language": "Change language"
+  },
+  "AdminDashboardPage": {
+    "sidebar_section_label": "Admin panel"
   }
 }

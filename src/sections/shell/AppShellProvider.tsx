@@ -1,40 +1,58 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { AppShell } from "./components";
+import { DiscoverSearchProvider } from "./DiscoverSearchContext";
+import { useRouter } from "@/libs/I18nNavigation";
 
 interface AppShellProviderProps {
   children: ReactNode;
 }
 
-const NAV_ITEMS = [
-  { label: "Discover", href: "/discover" },
-  { label: "Trade", href: "/trade" },
-  { label: "Portfolio", href: "/portfolio" },
-  { label: "Leaderboard", href: "/leaderboard" },
-  { label: "Admin", href: "/admin" },
-  { label: "Help", href: "/help" },
-];
-
 export function AppShellProvider(props: AppShellProviderProps) {
   const { children } = props;
   const router = useRouter();
-  const pathname = usePathname();
+  const { isLoaded, isSignedIn } = useAuth();
+  const [walletBalanceUsd, setWalletBalanceUsd] = useState<number | undefined>(undefined);
 
-  const navigationItems = NAV_ITEMS.map((item) => ({
-    ...item,
-    isActive: pathname?.startsWith(item.href) ?? false,
-  }));
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn) {
+      setWalletBalanceUsd(undefined);
+      return;
+    }
+
+    let cancelled = false;
+
+    const run = async (): Promise<void> => {
+      const res = await fetch("/api/me/wallet");
+      const json = (await res.json().catch(() => null)) as { totalUsd?: number } | null;
+      if (cancelled) {
+        return;
+      }
+      if (!res.ok || json === null || typeof json.totalUsd !== "number") {
+        setWalletBalanceUsd(0);
+        return;
+      }
+      setWalletBalanceUsd(json.totalUsd);
+    };
+
+    void run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoaded, isSignedIn]);
 
   return (
-    <AppShell
-      navigationItems={navigationItems}
-      walletBalance={1250}
-      onNavigate={(href) => router.push(href)}
-    >
-      {children}
-    </AppShell>
+    <DiscoverSearchProvider>
+      <AppShell
+        walletBalance={isSignedIn ? walletBalanceUsd : undefined}
+        onNavigate={(href) => router.push(href)}
+      >
+        {children}
+      </AppShell>
+    </DiscoverSearchProvider>
   );
 }
-

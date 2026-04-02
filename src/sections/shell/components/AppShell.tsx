@@ -1,15 +1,11 @@
-import React, { useState } from "react";
+"use client";
+
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { DS } from "@/product/design-system/colors";
-import { MainNav } from "./MainNav";
+import { useOptionalDiscoverSearch } from "@/sections/shell/DiscoverSearchContext";
 import { ClerkUserMenu } from "./auth/ClerkUserMenu";
 import Image from "next/image";
-
-export interface NavigationItem {
-  label: string;
-  href: string;
-  isActive?: boolean;
-}
 
 export interface AppShellUser {
   name: string;
@@ -18,20 +14,22 @@ export interface AppShellUser {
 
 export interface AppShellProps {
   children: React.ReactNode;
-  navigationItems: NavigationItem[];
   walletBalance?: number;
   onNavigate?: (href: string) => void;
 }
 
 export function AppShell(props: AppShellProps) {
-  const { children, navigationItems, walletBalance, onNavigate } = props;
+  const { children, walletBalance, onNavigate } = props;
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const discoverSearch = useOptionalDiscoverSearch();
 
   const handleNavigate = (href: string) => {
     onNavigate?.(href);
     setMobileOpen(false);
   };
+
+  const showHeaderSearch = discoverSearch?.discoverSearchActive === true;
 
   return (
     <div
@@ -39,7 +37,7 @@ export function AppShell(props: AppShellProps) {
       style={{ fontFamily: "Inter, sans-serif" }}
     >
       <header
-        className="sticky top-0 z-30 h-14 flex items-center gap-4 px-4 md:px-6 border-b"
+        className="sticky top-0 z-30 h-14 flex items-center gap-2 sm:gap-4 px-3 sm:px-4 md:px-6 border-b"
         style={{
           background: "rgba(18,18,18,0.96)",
           backdropFilter: "blur(12px)",
@@ -48,7 +46,7 @@ export function AppShell(props: AppShellProps) {
       >
         <button
           type="button"
-          onClick={() => handleNavigate("/discover")}
+          onClick={() => handleNavigate("/")}
           className="flex items-center gap-2 shrink-0 cursor-pointer select-none"
         >
           <div
@@ -75,16 +73,42 @@ export function AppShell(props: AppShellProps) {
           </span>
         </button>
 
-        <div
-          className="hidden md:block w-px h-5 shrink-0"
-          style={{ background: DS.bgDarkGray }}
-        />
+        {showHeaderSearch && discoverSearch !== null && (
+          <div className="relative flex-1 min-w-0 max-w-[480px]">
+            <svg
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none z-1"
+              style={{ opacity: 0.25 }}
+              width={13}
+              height={13}
+              fill="none"
+              stroke="white"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="7" strokeWidth="2.5" />
+              <path d="M16.5 16.5L21 21" strokeWidth="2.5" strokeLinecap="round" />
+            </svg>
+            <input
+              type="search"
+              value={discoverSearch.searchQuery}
+              onChange={(event) => discoverSearch.setSearchQuery(event.target.value)}
+              placeholder="Search markets..."
+              className="w-full pl-[30px] pr-3 py-[7px] text-[12px] rounded-lg outline-none transition-colors"
+              style={{
+                background: DS.bgDark,
+                border: `1px solid ${DS.bgSurface}`,
+                color: DS.textPrimary,
+              }}
+              onFocus={(event) => {
+                event.target.style.borderColor = DS.accentDarker;
+              }}
+              onBlur={(event) => {
+                event.target.style.borderColor = DS.bgSurface;
+              }}
+            />
+          </div>
+        )}
 
-        <div className="hidden md:flex flex-1 min-w-0">
-          <MainNav items={navigationItems} onNavigate={handleNavigate} />
-        </div>
-
-        <div className="ml-auto flex items-center gap-2 shrink-0">
+        <div className={`flex items-center gap-2 shrink-0 ${showHeaderSearch ? "" : "ml-auto"}`}>
           {walletBalance !== undefined && (
             <div
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border"
@@ -140,31 +164,7 @@ export function AppShell(props: AppShellProps) {
             className="fixed top-14 inset-x-0 z-20 md:hidden border-b shadow-lg"
             style={{ background: DS.bgDark, borderColor: DS.bgDarkGray }}
           >
-            <div className="flex flex-col p-3 gap-1">
-              {navigationItems.map((item) => (
-                <button
-                  key={item.href}
-                  type="button"
-                  onClick={() => handleNavigate(item.href)}
-                  className={[
-                    "flex items-center px-3 py-2.5 rounded-xl text-sm font-medium w-full text-left transition-colors",
-                    item.isActive
-                      ? "text-zinc-950"
-                      : "text-zinc-400 hover:text-zinc-100",
-                  ].join(" ")}
-                  style={{
-                    fontFamily: "Space Grotesk, sans-serif",
-                    background: item.isActive ? DS.accentGradient : "transparent",
-                  }}
-                >
-                  {item.label}
-                </button>
-              ))}
-
-              <div
-                className="mt-2 pt-2 border-t flex items-center justify-between px-3"
-                style={{ borderColor: DS.bgDarkGray }}
-              >
+            <div className="flex items-center justify-between px-4 py-3 gap-3">
                 {walletBalance !== undefined && (
                   <div className="flex items-center gap-1.5">
                     <span
@@ -185,8 +185,9 @@ export function AppShell(props: AppShellProps) {
                     </span>
                   </div>
                 )}
-                <ClerkUserMenu />
-              </div>
+                <div className="ml-auto">
+                  <ClerkUserMenu />
+                </div>
             </div>
           </div>
         </>
@@ -198,4 +199,3 @@ export function AppShell(props: AppShellProps) {
     </div>
   );
 }
-

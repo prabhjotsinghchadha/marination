@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { DS as BaseDS } from "@/product/design-system/colors";
 import adminData from "@/product/sections/admin-dashboard/data.json";
 import type {
@@ -10,6 +11,8 @@ import type {
   AdminMarketStatus,
   AdminTrade,
   AdminUser,
+  AdminUserRole,
+  AdminUsersViewer,
 } from "@/product/sections/admin-dashboard/types";
 
 const DS = {
@@ -1326,11 +1329,24 @@ function CreateMarketPage(props: {
   );
 }
 
+const USER_ROLE_OPTIONS: Array<{ value: AdminUserRole; label: string }> = [
+  { value: "admin", label: "Admin" },
+  { value: "moderator", label: "Moderator" },
+  { value: "user", label: "Trader" },
+];
+
+function roleLabel(role: AdminUserRole): string {
+  return USER_ROLE_OPTIONS.find((o) => o.value === role)?.label ?? role;
+}
+
 function UsersPage() {
   const [search, setSearch] = useState<string>("");
   const [userRows, setUserRows] = useState<User[]>([]);
+  const [viewer, setViewer] = useState<AdminUsersViewer | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [roleError, setRoleError] = useState<string | null>(null);
+  const [updatingRoleUserId, setUpdatingRoleUserId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -1339,7 +1355,9 @@ function UsersPage() {
       setLoadError(null);
       setLoading(true);
       const res = await fetch("/api/admin/users");
-      const json = (await res.json().catch(() => null)) as { message?: string; users?: User[] } | null;
+      const json = (await res.json().catch(() => null)) as
+        | { message?: string; users?: User[]; viewer?: AdminUsersViewer }
+        | null;
       if (cancelled) {
         return;
       }
@@ -1347,14 +1365,17 @@ function UsersPage() {
       if (!res.ok) {
         setLoadError(json?.message ?? "Failed to load users");
         setUserRows([]);
+        setViewer(null);
         return;
       }
       if (!json?.users) {
         setLoadError("Invalid response");
         setUserRows([]);
+        setViewer(null);
         return;
       }
       setUserRows(json.users);
+      setViewer(json.viewer ?? null);
     };
 
     void run();
@@ -1369,6 +1390,8 @@ function UsersPage() {
       u.displayName.toLowerCase().includes(search.toLowerCase()) ||
       u.email.toLowerCase().includes(search.toLowerCase()),
   );
+
+  const gridCols = "1.5fr 1fr 72px 118px 110px 110px 90px 100px";
 
   return (
     <div>
@@ -1404,10 +1427,13 @@ function UsersPage() {
       {loadError !== null && (
         <p style={{ fontSize: 12, color: DS.error, marginBottom: 12 }}>{loadError}</p>
       )}
+      {roleError !== null && (
+        <p style={{ fontSize: 12, color: DS.error, marginBottom: 12 }}>{roleError}</p>
+      )}
 
       <div style={{ background: DS.bgDark, border: `1px solid ${DS.bgSurface}`, borderRadius: 14, overflow: "hidden" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 80px 110px 110px 90px 100px", padding: "11px 20px", borderBottom: `1px solid ${DS.bgSurface}` }}>
-          {["User", "Email", "Auth", "Available", "Reserved", "Trades", "Joined"].map((h) => (
+        <div style={{ display: "grid", gridTemplateColumns: gridCols, padding: "11px 20px", borderBottom: `1px solid ${DS.bgSurface}` }}>
+          {["User", "Email", "Auth", "Role", "Available", "Reserved", "Trades", "Joined"].map((h) => (
             <span key={h} style={{ fontSize: 10, fontWeight: 700, color: DS.textSecondary, textTransform: "uppercase", letterSpacing: "0.07em" }}>
               {h}
             </span>
@@ -1426,12 +1452,13 @@ function UsersPage() {
           loadError === null &&
           filtered.map((u, i) => {
             const initial = u.displayName.slice(0, 1) || "•";
+            const canEditRole = viewer?.canAssignRoles === true;
             return (
               <div
                 key={u.id}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "1.5fr 1fr 80px 110px 110px 90px 100px",
+                  gridTemplateColumns: gridCols,
                   alignItems: "center",
                   padding: "13px 20px",
                   borderBottom: i < filtered.length - 1 ? `1px solid ${DS.bgDarkest}` : "none",
@@ -1459,6 +1486,56 @@ function UsersPage() {
                 </div>
                 <span style={{ fontSize: 12, color: DS.textSecondary, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.email}</span>
                 <span style={{ fontSize: 11, fontWeight: 600, color: DS.accentGray, textTransform: "uppercase", letterSpacing: "0.04em" }}>{u.authProvider.toUpperCase()}</span>
+                <div style={{ minWidth: 0 }}>
+                  {canEditRole ? (
+                    <select
+                      value={u.role}
+                      disabled={updatingRoleUserId === u.id}
+                      onChange={(e) => {
+                        const next = e.target.value as AdminUserRole;
+                        if (next === u.role) {
+                          return;
+                        }
+                        setRoleError(null);
+                        setUpdatingRoleUserId(u.id);
+                        void (async () => {
+                          const res = await fetch(`/api/admin/users/${u.id}`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ role: next }),
+                          });
+                          const body = (await res.json().catch(() => null)) as { message?: string } | null;
+                          setUpdatingRoleUserId(null);
+                          if (!res.ok) {
+                            setRoleError(body?.message ?? "Could not update role");
+                            return;
+                          }
+                          setUserRows((rows) => rows.map((row) => (row.id === u.id ? { ...row, role: next } : row)));
+                        })();
+                      }}
+                      style={{
+                        width: "100%",
+                        maxWidth: 112,
+                        background: DS.bgSurface,
+                        border: `1px solid ${DS.bgDarkest}`,
+                        borderRadius: 8,
+                        color: DS.textPrimary,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        padding: "6px 8px",
+                        cursor: updatingRoleUserId === u.id ? "wait" : "pointer",
+                      }}
+                    >
+                      {USER_ROLE_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <span style={{ fontSize: 11, fontWeight: 700, color: DS.accentGray, letterSpacing: "0.04em" }}>{roleLabel(u.role).toUpperCase()}</span>
+                  )}
+                </div>
                 <span style={{ fontSize: 13, fontWeight: 700, color: DS.textPrimary, fontFamily: "'DM Mono', monospace" }}>${u.balance.toLocaleString()}</span>
                 <span style={{ fontSize: 13, color: DS.textSecondary, fontFamily: "'DM Mono', monospace" }}>${u.reserved.toLocaleString()}</span>
                 <span style={{ fontSize: 13, color: DS.textSecondary, fontFamily: "'DM Mono', monospace" }}>{u.trades}</span>
@@ -1789,6 +1866,7 @@ function ResolveModal(props: { market: Market; onClose: () => void }) {
 }
 
 export function AdminDashboard() {
+  const t = useTranslations("AdminDashboardPage");
   const [view, setView] = useState<View>("overview");
   const [resolveMarket, setResolveMarket] = useState<Market | null>(null);
   const [marketsCount, setMarketsCount] = useState<number | null>(null);
@@ -1841,30 +1919,21 @@ export function AdminDashboard() {
           overflowY: "auto",
         }}
       >
-        {/* Logo */}
-        <div style={{ padding: "22px 20px 18px", borderBottom: `1px solid ${DS.bgSurface}` }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-            <div
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: 10,
-                background: DS.accentGradient,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 18,
-              }}
-            >
-              🎵
-            </div>
-            <div>
-              <p style={{ fontFamily: "'DM Mono', monospace", fontWeight: 700, fontSize: 14, letterSpacing: "-0.01em" }}>
-                Mari<span style={{ color: DS.accentDarker }}>Nation</span>
-              </p>
-              <p style={{ fontSize: 10, color: DS.textSecondary, fontWeight: 500, letterSpacing: "0.04em" }}>ADMIN PANEL</p>
-            </div>
-          </div>
+        {/* Section label — brand lives in AppShell header */}
+        <div style={{ padding: "16px 20px 14px", borderBottom: `1px solid ${DS.bgSurface}` }}>
+          <p
+            style={{
+              fontFamily: "'DM Mono', monospace",
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: "0.06em",
+              color: DS.textSecondary,
+              textTransform: "uppercase",
+              margin: 0,
+            }}
+          >
+            {t("sidebar_section_label")}
+          </p>
         </div>
 
         {/* Nav */}
@@ -1919,32 +1988,6 @@ export function AdminDashboard() {
             );
           })}
         </nav>
-
-        {/* Footer */}
-        <div style={{ padding: "14px 16px", borderTop: `1px solid ${DS.bgSurface}` }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-            <div
-              style={{
-                width: 30,
-                height: 30,
-                borderRadius: "50%",
-                background: DS.accentGradient,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 12,
-                fontWeight: 800,
-                color: DS.neutralDark,
-              }}
-            >
-              A
-            </div>
-            <div>
-              <p style={{ fontSize: 12, fontWeight: 700, color: DS.textPrimary }}>Admin</p>
-              <p style={{ fontSize: 10, color: DS.textSecondary }}>admin@marination.io</p>
-            </div>
-          </div>
-        </div>
       </aside>
 
       {/* ── MAIN ────────────────────────────────────────────────────────── */}

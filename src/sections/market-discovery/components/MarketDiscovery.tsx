@@ -1,7 +1,7 @@
 import type {
     MarketDiscoveryProps,
-    SortOption,
     Market,
+    SortOption,
 } from "@/product/sections/market-discovery/types";
 import { DS } from "@/product/design-system/colors";
 import { FeaturedHero } from "./FeaturedHero";
@@ -255,9 +255,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
         markets,
         categories,
         filterPills,
-        sortOptions,
         activeCategory,
-        activeSort,
         activeFilterPill,
         searchQuery,
         isLoadingMore,
@@ -266,7 +264,6 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
         hotTopics,
         onSearchChange,
         onCategoryChange,
-        onSortChange,
         onFilterPillChange,
         onMarketClick,
         onYesClick,
@@ -305,7 +302,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
             }
             return true;
         }),
-        activeSort
+        "trending",
     );
 
     return (
@@ -323,73 +320,6 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                     borderBottom: `1px solid ${DS.bgDarkGray}`,
                 }}
             >
-                <div className="flex items-center gap-2.5 px-5 pt-2 pb-1.5 max-w-[1380px] mx-auto">
-                    <div className="relative flex-1 max-w-[480px]">
-                        <svg
-                            className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
-                            style={{ opacity: 0.25 }}
-                            width={13}
-                            height={13}
-                            fill="none"
-                            stroke="white"
-                            viewBox="0 0 24 24"
-                        >
-                            <circle cx="11" cy="11" r="7" strokeWidth="2.5" />
-                            <path d="M16.5 16.5L21 21" strokeWidth="2.5" strokeLinecap="round" />
-                        </svg>
-                        <input
-                            value={searchQuery}
-                            onChange={(event) => onSearchChange(event.target.value)}
-                            placeholder="Search markets..."
-                            className="w-full pl-[30px] pr-3 py-[7px] text-[12px] rounded-lg outline-none transition-colors"
-                            style={{
-                                background: DS.bgDark,
-                                border: `1px solid ${DS.bgSurface}`,
-                                color: DS.textPrimary,
-                            }}
-                            onFocus={(event) => {
-                                event.target.style.borderColor = DS.accentDarker;
-                            }}
-                            onBlur={(event) => {
-                                event.target.style.borderColor = DS.bgSurface;
-                            }}
-                        />
-                    </div>
-
-                    <div className="relative shrink-0">
-                        <select
-                            value={activeSort}
-                            onChange={(event) => onSortChange(event.target.value as SortOption)}
-                            className="appearance-none pl-2.5 pr-6 py-[7px] text-[11px] font-medium rounded-lg outline-none cursor-pointer"
-                            style={{
-                                background: DS.bgDark,
-                                border: `1px solid ${DS.bgSurface}`,
-                                color: DS.accentGray,
-                            }}
-                        >
-                            {sortOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                        <svg
-                            className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none"
-                            width={8}
-                            height={8}
-                            viewBox="0 0 10 10"
-                            fill="none"
-                        >
-                            <path
-                                d="M2 3.5L5 6.5L8 3.5"
-                                stroke={DS.accentGray}
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                            />
-                        </svg>
-                    </div>
-                </div>
-
                 <div className="max-w-[1380px] mx-auto px-5">
                     <CategoryStrip
                         categories={categories}

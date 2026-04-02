@@ -29,16 +29,27 @@ export interface AdminMarket {
 
 export type AdminAuthProvider = "google" | "twitter" | "apple" | "clerk";
 
+/** Platform role: staff (`admin`, `moderator`) use the dashboard; `user` is a trader. */
+export type AdminUserRole = "admin" | "moderator" | "user";
+
 export interface AdminUser {
   id: string;
   displayName: string;
   email: string;
   authProvider: AdminAuthProvider;
+  role: AdminUserRole;
   balance: number;
   reserved: number;
   trades: number;
   createdAt: string;
 }
+
+/** Returned with the users list so the UI can show role controls for admins only. */
+export type AdminUsersViewer = {
+  id: string;
+  role: AdminUserRole;
+  canAssignRoles: boolean;
+};
 
 export type AdminTradeType = "AMM_BUY" | "AMM_SELL";
 export type AdminTradeOutcome = "YES" | "NO";
