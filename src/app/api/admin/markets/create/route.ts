@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 import * as z from "zod";
 
 import { db } from "@/libs/DB";
-import { logger } from "@/libs/Logger";
 import { syncClerkUserFromClerkUser } from "@/libs/ClerkUserSync";
 import { createMarket, getMarketAtomicState } from "@/libs/amm";
 import { assets, marketCpmmBinaryState, marketEvents, marketOutcomes, markets, users } from "@/models/Schema";
@@ -257,11 +256,6 @@ export const POST = async (request: Request) => {
     eventType: EVENT_TYPE_MARKET_CREATED,
     actorUserId: dbUser.id,
     payload: eventDetails,
-  });
-
-  logger.info("Market created in Neon", {
-    marketId: createdMarket.id,
-    slug: createdMarket.slug,
   });
 
   return NextResponse.json({
