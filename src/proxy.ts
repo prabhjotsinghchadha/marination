@@ -54,14 +54,19 @@ export default async function proxy(
       });
     }
 
+    // Avoid next-intl rewrite/locale prefixing for App Router API routes.
+    // We still want `clerkMiddleware` to run so `currentUser()` works.
+    if (req.nextUrl.pathname.includes("/api/")) {
+      return NextResponse.next();
+    }
+
     return handleI18nRouting(req);
   })(request, event);
 }
 
 export const config = {
   // Match all pathnames except for
-  // - … `api` (App Router API routes must stay `/api/...`; next-intl would otherwise rewrite to `/en/api/...` and 404)
   // - … if they start with `/_next`, `/_vercel` or `monitoring`
   // - … the ones containing a dot (e.g. `favicon.ico`)
-  matcher: '/((?!api|_next|_vercel|monitoring|.*\\..*).*)',
+  matcher: '/((?!_next|_vercel|monitoring|.*\\..*).*)',
 };

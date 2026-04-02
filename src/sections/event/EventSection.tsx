@@ -1,21 +1,12 @@
 "use client";
 
-import eventData from "@/product/sections/event/data.json";
-import type { EventData } from "@/product/sections/event/types";
 import { EventMarket } from "./components/EventMarket";
+import type { EventDetails } from "@/product/sections/event/types";
 
 type EventSectionProps = {
-  slug: string;
+  event: EventDetails;
 };
 
-const typedEventData = eventData as EventData;
-
 export function EventSection(props: EventSectionProps) {
-  const event = typedEventData.events.find(item => item.slug === props.slug);
-
-  if (!event) {
-    return null;
-  }
-
-  return <EventMarket event={event} />;
+  return <EventMarket event={props.event} />;
 }

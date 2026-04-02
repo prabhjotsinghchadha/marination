@@ -599,6 +599,8 @@ function CreateMarketPage(props: { onCreated: () => void }) {
   });
   const [step, setStep] = useState<number>(1);
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [isCreating, setIsCreating] = useState<boolean>(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const setField = <K extends keyof CreateMarketForm>(key: K, value: CreateMarketForm[K]) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -610,6 +612,47 @@ function CreateMarketPage(props: { onCreated: () => void }) {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "")
       .slice(0, 60);
+
+  const handleCreate = async (): Promise<void> => {
+    setIsCreating(true);
+    setCreateError(null);
+
+    try {
+      // Admin API route is mounted at `/api/admin/markets/create` (no locale prefix).
+      const res = await fetch(`/api/admin/markets/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          question: form.question,
+          description: form.description,
+          slug: form.slug,
+          model: form.model,
+          collateralAsset: form.collateralAsset,
+          startTime: form.startTime || null,
+          endTime: form.endTime,
+          feeBps: Number(form.feeBps),
+          initialLiquidity: Number(form.initialLiquidity),
+          yesLabel: form.yesLabel,
+          noLabel: form.noLabel,
+        }),
+      });
+
+      if (!res.ok) {
+        const json = await res.json().catch(() => null);
+        const message = json?.message ?? "Failed to create market";
+        throw new Error(message);
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to create market";
+      setCreateError(message);
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
   if (submitted) {
     return (
@@ -962,6 +1005,21 @@ function CreateMarketPage(props: { onCreated: () => void }) {
               </p>
             </div>
 
+            {createError && (
+              <p
+                style={{
+                  fontSize: 12,
+                  color: DS.error,
+                  background: DS.bgDarkest,
+                  border: `1px solid ${DS.dangerBg}`,
+                  borderRadius: 8,
+                  padding: "10px 12px",
+                }}
+              >
+                {createError}
+              </p>
+            )}
+
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
               <button
                 type="button"
@@ -981,7 +1039,8 @@ function CreateMarketPage(props: { onCreated: () => void }) {
               </button>
               <button
                 type="button"
-                onClick={() => setSubmitted(true)}
+                onClick={handleCreate}
+                disabled={isCreating}
                 style={{
                   background: DS.accentGradient,
                   color: DS.neutralDark,
@@ -990,10 +1049,11 @@ function CreateMarketPage(props: { onCreated: () => void }) {
                   padding: "10px 28px",
                   borderRadius: 10,
                   border: "none",
-                  cursor: "pointer",
+                  cursor: isCreating ? "not-allowed" : "pointer",
+                  opacity: isCreating ? 0.7 : 1,
                 }}
               >
-                ✓ Create Market
+                {isCreating ? "Creating..." : "✓ Create Market"}
               </button>
             </div>
           </div>
