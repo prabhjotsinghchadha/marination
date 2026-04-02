@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DS as BaseDS } from "@/product/design-system/colors";
 import adminData from "@/product/sections/admin-dashboard/data.json";
 import type {
@@ -378,15 +378,89 @@ function OverviewPage(props: { onNavigate: (v: View) => void }) {
   );
 }
 
-function MarketsPage(props: { onNavigate: (v: View) => void; onResolve: (id: string) => void }) {
+function MarketsPage(props: {
+  onResolve: (market: Market) => void;
+  onMarketsLoaded?: (count: number) => void;
+  onGoToCreateMarket: () => void;
+  onEditMarket: (marketId: string) => void;
+}) {
   const [filter, setFilter] = useState<MarketStatus | "ALL">("ALL");
   const [search, setSearch] = useState<string>("");
+  const [markets, setMarkets] = useState<Market[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [publishingId, setPublishingId] = useState<string | null>(null);
+  const [publishError, setPublishError] = useState<string | null>(null);
 
-  const filtered = MOCK_MARKETS.filter(
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadMarkets = async (): Promise<void> => {
+      setLoadError(null);
+      setLoading(true);
+      const res = await fetch("/api/admin/markets");
+      const json = (await res.json().catch(() => null)) as { message?: string; markets?: Market[] } | null;
+      if (cancelled) {
+        return;
+      }
+      setLoading(false);
+      if (!res.ok) {
+        setLoadError(json?.message ?? "Failed to load markets");
+        setMarkets([]);
+        return;
+      }
+      if (!json?.markets) {
+        setLoadError("Invalid response");
+        setMarkets([]);
+        return;
+      }
+      setMarkets(json.markets);
+      props.onMarketsLoaded?.(json.markets.length);
+    };
+
+    void loadMarkets();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handlePublish = async (m: Market): Promise<void> => {
+    setPublishError(null);
+    setPublishingId(m.id);
+    const res = await fetch(`/api/admin/markets/${m.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ action: "publish" }),
+    });
+    const json = (await res.json().catch(() => null)) as { message?: string } | null;
+    setPublishingId(null);
+    if (!res.ok) {
+      setPublishError(json?.message ?? "Failed to publish market");
+      return;
+    }
+    setLoadError(null);
+    setLoading(true);
+    const listRes = await fetch("/api/admin/markets");
+    const listJson = (await listRes.json().catch(() => null)) as { message?: string; markets?: Market[] } | null;
+    setLoading(false);
+    if (!listRes.ok || !listJson?.markets) {
+      setLoadError(listJson?.message ?? "Failed to refresh markets");
+      return;
+    }
+    setMarkets(listJson.markets);
+    props.onMarketsLoaded?.(listJson.markets.length);
+  };
+
+  const filtered = markets.filter(
     (m) => (filter === "ALL" || m.status === filter) && m.question.toLowerCase().includes(search.toLowerCase()),
   );
 
   const FILTERS: Array<MarketStatus | "ALL"> = ["ALL", "OPEN", "DRAFT", "CLOSED", "RESOLVED"];
+
+  const activeCount = markets.filter((m) => m.status === "OPEN").length;
 
   return (
     <div>
@@ -404,12 +478,12 @@ function MarketsPage(props: { onNavigate: (v: View) => void; onResolve: (id: str
             Markets
           </h1>
           <p style={{ fontSize: 13, color: DS.textSecondary, marginTop: 4 }}>
-            {MOCK_MARKETS.length} markets · {MOCK_MARKETS.filter((m) => m.status === "OPEN").length} active
+            {loading ? "Loading…" : `${markets.length} markets · ${activeCount} active`}
           </p>
         </div>
         <button
           type="button"
-          onClick={() => props.onNavigate("create-market")}
+          onClick={() => props.onGoToCreateMarket()}
           style={{
             background: DS.accentGradient,
             color: DS.neutralDark,
@@ -424,6 +498,10 @@ function MarketsPage(props: { onNavigate: (v: View) => void; onResolve: (id: str
           + Create Market
         </button>
       </div>
+
+      {publishError !== null && (
+        <p style={{ fontSize: 12, color: DS.error, marginBottom: 12 }}>{publishError}</p>
+      )}
 
       {/* Filters */}
       <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
@@ -483,9 +561,21 @@ function MarketsPage(props: { onNavigate: (v: View) => void; onResolve: (id: str
           ))}
         </div>
 
-        {filtered.length === 0 && <div style={{ padding: "40px 20px", textAlign: "center", color: DS.textSecondary, fontSize: 13 }}>No markets found</div>}
+        {loadError !== null && (
+          <div style={{ padding: "40px 20px", textAlign: "center", color: DS.error, fontSize: 13 }}>{loadError}</div>
+        )}
 
-        {filtered.map((m, i) => (
+        {!loading && loadError === null && filtered.length === 0 && (
+          <div style={{ padding: "40px 20px", textAlign: "center", color: DS.textSecondary, fontSize: 13 }}>No markets found</div>
+        )}
+
+        {loading && loadError === null && (
+          <div style={{ padding: "40px 20px", textAlign: "center", color: DS.textSecondary, fontSize: 13 }}>Loading markets…</div>
+        )}
+
+        {!loading &&
+          loadError === null &&
+          filtered.map((m, i) => (
           <div
             key={m.id}
             style={{
@@ -514,7 +604,7 @@ function MarketsPage(props: { onNavigate: (v: View) => void; onResolve: (id: str
               {m.status === "OPEN" && (
                 <button
                   type="button"
-                  onClick={() => props.onResolve(m.id)}
+                  onClick={() => props.onResolve(m)}
                   style={{
                     background: "rgba(247,148,29,0.12)",
                     border: `1px solid ${DS.accentDarker}`,
@@ -532,6 +622,8 @@ function MarketsPage(props: { onNavigate: (v: View) => void; onResolve: (id: str
               {m.status === "DRAFT" && (
                 <button
                   type="button"
+                  onClick={() => void handlePublish(m)}
+                  disabled={publishingId === m.id}
                   style={{
                     background: DS.successBg,
                     border: `1px solid ${DS.success}`,
@@ -540,30 +632,34 @@ function MarketsPage(props: { onNavigate: (v: View) => void; onResolve: (id: str
                     fontWeight: 700,
                     padding: "5px 10px",
                     borderRadius: 6,
+                    cursor: publishingId === m.id ? "wait" : "pointer",
+                    opacity: publishingId === m.id ? 0.6 : 1,
+                  }}
+                >
+                  {publishingId === m.id ? "…" : "Publish"}
+                </button>
+              )}
+              {m.status === "DRAFT" && (
+                <button
+                  type="button"
+                  onClick={() => props.onEditMarket(m.id)}
+                  style={{
+                    background: DS.bgSurface,
+                    border: "none",
+                    color: DS.textSecondary,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    padding: "5px 10px",
+                    borderRadius: 6,
                     cursor: "pointer",
                   }}
                 >
-                  Publish
+                  Edit
                 </button>
               )}
-              <button
-                type="button"
-                style={{
-                  background: DS.bgSurface,
-                  border: "none",
-                  color: DS.textSecondary,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  padding: "5px 10px",
-                  borderRadius: 6,
-                  cursor: "pointer",
-                }}
-              >
-                Edit
-              </button>
             </div>
           </div>
-        ))}
+          ))}
       </div>
     </div>
   );
@@ -583,24 +679,40 @@ type CreateMarketForm = {
   initialLiquidity: string;
 };
 
-function CreateMarketPage(props: { onCreated: () => void }) {
-  const [form, setForm] = useState<CreateMarketForm>({
-    question: "",
-    description: "",
-    slug: "",
-    model: "CPMM_BINARY",
-    collateralAsset: "USDC",
-    startTime: "",
-    endTime: "",
-    feeBps: "200",
-    yesLabel: "Yes",
-    noLabel: "No",
-    initialLiquidity: "1000",
-  });
+const DEFAULT_CREATE_FORM: CreateMarketForm = {
+  question: "",
+  description: "",
+  slug: "",
+  model: "CPMM_BINARY",
+  collateralAsset: "USDC",
+  startTime: "",
+  endTime: "",
+  feeBps: "200",
+  yesLabel: "Yes",
+  noLabel: "No",
+  initialLiquidity: "1000",
+};
+
+function toDatetimeLocal(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function CreateMarketPage(props: {
+  onCreated: () => void;
+  editMarketId: string | null;
+  onCancelEdit: () => void;
+}) {
+  const [form, setForm] = useState<CreateMarketForm>(DEFAULT_CREATE_FORM);
   const [step, setStep] = useState<number>(1);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [createError, setCreateError] = useState<string | null>(null);
+  const [editReady, setEditReady] = useState<boolean>(() => props.editMarketId == null);
+  const [editLoadError, setEditLoadError] = useState<string | null>(null);
+  const [lastSubmitWasEdit, setLastSubmitWasEdit] = useState<boolean>(false);
 
   const setField = <K extends keyof CreateMarketForm>(key: K, value: CreateMarketForm[K]) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -613,12 +725,107 @@ function CreateMarketPage(props: { onCreated: () => void }) {
       .replace(/(^-|-$)/g, "")
       .slice(0, 60);
 
-  const handleCreate = async (): Promise<void> => {
+  useEffect(() => {
+    if (props.editMarketId == null) {
+      setForm(DEFAULT_CREATE_FORM);
+      setStep(1);
+      setSubmitted(false);
+      setCreateError(null);
+      setEditLoadError(null);
+      setEditReady(true);
+      return;
+    }
+
+    let cancelled = false;
+    setEditReady(false);
+    setEditLoadError(null);
+
+    const run = async (): Promise<void> => {
+      const res = await fetch(`/api/admin/markets/${props.editMarketId}`);
+      const json = (await res.json().catch(() => null)) as {
+        message?: string;
+        market?: {
+          question: string;
+          description: string | null;
+          slug: string;
+          startTime: string | null;
+          endTime: string;
+          feeBps: number;
+          initialLiquidity: number;
+          yesLabel: string;
+          noLabel: string;
+        };
+      } | null;
+
+      if (cancelled) {
+        return;
+      }
+
+      if (!res.ok || !json?.market) {
+        setEditLoadError(json?.message ?? "Failed to load market");
+        setEditReady(true);
+        return;
+      }
+
+      const m = json.market;
+      setForm({
+        question: m.question,
+        description: m.description ?? "",
+        slug: m.slug,
+        model: "CPMM_BINARY",
+        collateralAsset: "USDC",
+        startTime: m.startTime ? toDatetimeLocal(m.startTime) : "",
+        endTime: m.endTime ? toDatetimeLocal(m.endTime) : "",
+        feeBps: String(m.feeBps),
+        yesLabel: m.yesLabel,
+        noLabel: m.noLabel,
+        initialLiquidity: String(m.initialLiquidity),
+      });
+      setStep(1);
+      setEditReady(true);
+    };
+
+    void run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [props.editMarketId]);
+
+  const handleSubmit = async (): Promise<void> => {
     setIsCreating(true);
     setCreateError(null);
 
     try {
-      // Admin API route is mounted at `/api/admin/markets/create` (no locale prefix).
+      if (props.editMarketId != null) {
+        const res = await fetch(`/api/admin/markets/${props.editMarketId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            question: form.question,
+            description: form.description || null,
+            slug: form.slug,
+            startTime: form.startTime || null,
+            endTime: form.endTime,
+            yesLabel: form.yesLabel,
+            noLabel: form.noLabel,
+          }),
+        });
+
+        const json = (await res.json().catch(() => null)) as { message?: string } | null;
+
+        if (!res.ok) {
+          const message = json?.message ?? "Failed to save market";
+          throw new Error(message);
+        }
+
+        setLastSubmitWasEdit(true);
+        setSubmitted(true);
+        return;
+      }
+
       const res = await fetch(`/api/admin/markets/create`, {
         method: "POST",
         headers: {
@@ -646,14 +853,47 @@ function CreateMarketPage(props: { onCreated: () => void }) {
         throw new Error(message);
       }
 
+      setLastSubmitWasEdit(false);
       setSubmitted(true);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to create market";
+      const message = err instanceof Error ? err.message : "Failed to save market";
       setCreateError(message);
     } finally {
       setIsCreating(false);
     }
   };
+
+  if (props.editMarketId != null && !editReady && editLoadError == null) {
+    return (
+      <div style={{ padding: "48px 0", textAlign: "center", color: DS.textSecondary, fontSize: 14 }}>
+        Loading market…
+      </div>
+    );
+  }
+
+  if (props.editMarketId != null && editLoadError != null) {
+    return (
+      <div style={{ maxWidth: 440 }}>
+        <p style={{ color: DS.error, fontSize: 14, marginBottom: 16 }}>{editLoadError}</p>
+        <button
+          type="button"
+          onClick={() => props.onCancelEdit()}
+          style={{
+            background: DS.accentGradient,
+            color: DS.neutralDark,
+            fontWeight: 700,
+            fontSize: 13,
+            padding: "10px 20px",
+            borderRadius: 10,
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          Back to markets
+        </button>
+      </div>
+    );
+  }
 
   if (submitted) {
     return (
@@ -673,9 +913,13 @@ function CreateMarketPage(props: { onCreated: () => void }) {
         >
           ✓
         </div>
-        <h2 style={{ fontFamily: "'DM Mono', monospace", fontSize: 22, color: DS.textPrimary, fontWeight: 700 }}>Market Created!</h2>
+        <h2 style={{ fontFamily: "'DM Mono', monospace", fontSize: 22, color: DS.textPrimary, fontWeight: 700 }}>
+          {lastSubmitWasEdit ? "Market updated" : "Market Created!"}
+        </h2>
         <p style={{ color: DS.textSecondary, fontSize: 13, textAlign: "center", maxWidth: 340 }}>
-          Your market has been saved as a draft. Publish it from the Markets page when ready.
+          {lastSubmitWasEdit
+            ? "Your changes have been saved."
+            : "Your market has been saved as a draft. Publish it from the Markets page when ready."}
         </p>
         <button
           type="button"
@@ -725,8 +969,12 @@ function CreateMarketPage(props: { onCreated: () => void }) {
   return (
     <div>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: "'DM Mono', monospace", fontSize: 26, fontWeight: 700, color: DS.textPrimary, letterSpacing: "-0.02em" }}>Create Market</h1>
-        <p style={{ fontSize: 13, color: DS.textSecondary, marginTop: 4 }}>Define a new CPMM binary prediction market</p>
+        <h1 style={{ fontFamily: "'DM Mono', monospace", fontSize: 26, fontWeight: 700, color: DS.textPrimary, letterSpacing: "-0.02em" }}>
+          {props.editMarketId != null ? "Edit market" : "Create Market"}
+        </h1>
+        <p style={{ fontSize: 13, color: DS.textSecondary, marginTop: 4 }}>
+          {props.editMarketId != null ? "Update draft copy and outcome labels" : "Define a new CPMM binary prediction market"}
+        </p>
       </div>
 
       {/* Stepper */}
@@ -763,7 +1011,9 @@ function CreateMarketPage(props: { onCreated: () => void }) {
                 onChange={(e) => {
                   const v = e.target.value;
                   setField("question", v);
-                  setField("slug", autoSlug(v));
+                  if (props.editMarketId == null) {
+                    setField("slug", autoSlug(v));
+                  }
                 }}
                 placeholder="e.g. Will Bad Bunny's new album hit 1B streams within 30 days?"
                 rows={3}
@@ -865,7 +1115,8 @@ function CreateMarketPage(props: { onCreated: () => void }) {
                   type="number"
                   min="0"
                   max="9999"
-                  style={inputStyle}
+                  disabled={props.editMarketId != null}
+                  style={{ ...inputStyle, opacity: props.editMarketId != null ? 0.65 : 1 }}
                 />
                 <p style={{ fontSize: 11, color: DS.textSecondary, marginTop: 5 }}>{(Number(form.feeBps) / 100).toFixed(2)}% fee per trade</p>
               </div>
@@ -876,7 +1127,8 @@ function CreateMarketPage(props: { onCreated: () => void }) {
                   onChange={(e) => setField("initialLiquidity", e.target.value)}
                   type="number"
                   min="100"
-                  style={inputStyle}
+                  disabled={props.editMarketId != null}
+                  style={{ ...inputStyle, opacity: props.editMarketId != null ? 0.65 : 1 }}
                 />
                 <p style={{ fontSize: 11, color: DS.textSecondary, marginTop: 5 }}>Seeded equally into YES & NO pools</p>
               </div>
@@ -949,7 +1201,9 @@ function CreateMarketPage(props: { onCreated: () => void }) {
 
         {step === 3 && (
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <p style={{ fontWeight: 700, fontSize: 14, color: DS.textPrimary, marginBottom: 8 }}>Confirm & Create</p>
+            <p style={{ fontWeight: 700, fontSize: 14, color: DS.textPrimary, marginBottom: 8 }}>
+              {props.editMarketId != null ? "Confirm & save" : "Confirm & Create"}
+            </p>
             {[
               { label: "Question", val: form.question || "—" },
               { label: "Slug", val: form.slug || "—" },
@@ -988,23 +1242,25 @@ function CreateMarketPage(props: { onCreated: () => void }) {
               </div>
             ))}
 
-            <div
-              style={{
-                background: DS.warningBg,
-                border: `1px solid ${DS.warning}30`,
-                borderRadius: 8,
-                padding: "11px 14px",
-                display: "flex",
-                gap: 8,
-                alignItems: "flex-start",
-                marginTop: 8,
-              }}
-            >
-              <span style={{ fontSize: 14, marginTop: 1 }}>⚠</span>
-              <p style={{ fontSize: 12, color: DS.warning, lineHeight: 1.5 }}>
-                Market will be saved as <strong>DRAFT</strong>. You must publish it from the Markets page to allow trading.
-              </p>
-            </div>
+            {props.editMarketId == null && (
+              <div
+                style={{
+                  background: DS.warningBg,
+                  border: `1px solid ${DS.warning}30`,
+                  borderRadius: 8,
+                  padding: "11px 14px",
+                  display: "flex",
+                  gap: 8,
+                  alignItems: "flex-start",
+                  marginTop: 8,
+                }}
+              >
+                <span style={{ fontSize: 14, marginTop: 1 }}>⚠</span>
+                <p style={{ fontSize: 12, color: DS.warning, lineHeight: 1.5 }}>
+                  Market will be saved as <strong>DRAFT</strong>. You must publish it from the Markets page to allow trading.
+                </p>
+              </div>
+            )}
 
             {createError && (
               <p
@@ -1040,7 +1296,7 @@ function CreateMarketPage(props: { onCreated: () => void }) {
               </button>
               <button
                 type="button"
-                onClick={handleCreate}
+                onClick={() => void handleSubmit()}
                 disabled={isCreating}
                 style={{
                   background: DS.accentGradient,
@@ -1054,7 +1310,13 @@ function CreateMarketPage(props: { onCreated: () => void }) {
                   opacity: isCreating ? 0.7 : 1,
                 }}
               >
-                {isCreating ? "Creating..." : "✓ Create Market"}
+                {isCreating
+                  ? props.editMarketId != null
+                    ? "Saving…"
+                    : "Creating..."
+                  : props.editMarketId != null
+                    ? "✓ Save changes"
+                    : "✓ Create Market"}
               </button>
             </div>
           </div>
@@ -1066,8 +1328,46 @@ function CreateMarketPage(props: { onCreated: () => void }) {
 
 function UsersPage() {
   const [search, setSearch] = useState<string>("");
-  const filtered = MOCK_USERS.filter(
-    (u) => u.displayName.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()),
+  const [userRows, setUserRows] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const run = async (): Promise<void> => {
+      setLoadError(null);
+      setLoading(true);
+      const res = await fetch("/api/admin/users");
+      const json = (await res.json().catch(() => null)) as { message?: string; users?: User[] } | null;
+      if (cancelled) {
+        return;
+      }
+      setLoading(false);
+      if (!res.ok) {
+        setLoadError(json?.message ?? "Failed to load users");
+        setUserRows([]);
+        return;
+      }
+      if (!json?.users) {
+        setLoadError("Invalid response");
+        setUserRows([]);
+        return;
+      }
+      setUserRows(json.users);
+    };
+
+    void run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const filtered = userRows.filter(
+    (u) =>
+      u.displayName.toLowerCase().includes(search.toLowerCase()) ||
+      u.email.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -1075,7 +1375,9 @@ function UsersPage() {
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24 }}>
         <div>
           <h1 style={{ fontFamily: "'DM Mono', monospace", fontSize: 26, fontWeight: 700, color: DS.textPrimary, letterSpacing: "-0.02em" }}>Users</h1>
-          <p style={{ fontSize: 13, color: DS.textSecondary, marginTop: 4 }}>{MOCK_USERS.length} registered accounts</p>
+          <p style={{ fontSize: 13, color: DS.textSecondary, marginTop: 4 }}>
+            {loading ? "Loading…" : `${userRows.length} registered accounts`}
+          </p>
         </div>
       </div>
 
@@ -1099,6 +1401,10 @@ function UsersPage() {
         />
       </div>
 
+      {loadError !== null && (
+        <p style={{ fontSize: 12, color: DS.error, marginBottom: 12 }}>{loadError}</p>
+      )}
+
       <div style={{ background: DS.bgDark, border: `1px solid ${DS.bgSurface}`, borderRadius: 14, overflow: "hidden" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 80px 110px 110px 90px 100px", padding: "11px 20px", borderBottom: `1px solid ${DS.bgSurface}` }}>
           {["User", "Email", "Auth", "Available", "Reserved", "Trades", "Joined"].map((h) => (
@@ -1108,48 +1414,58 @@ function UsersPage() {
           ))}
         </div>
 
-        {filtered.map((u, i) => {
-          const initial = u.displayName.slice(0, 1) || "•";
-          return (
-            <div
-              key={u.id}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1.5fr 1fr 80px 110px 110px 90px 100px",
-                alignItems: "center",
-                padding: "13px 20px",
-                borderBottom: i < filtered.length - 1 ? `1px solid ${DS.bgDarkest}` : "none",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: "50%",
-                    background: DS.accentGradient,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 12,
-                    fontWeight: 800,
-                    color: DS.neutralDark,
-                    flexShrink: 0,
-                  }}
-                >
-                  {initial}
+        {loading && loadError === null && (
+          <div style={{ padding: "40px 20px", textAlign: "center", color: DS.textSecondary, fontSize: 13 }}>Loading users…</div>
+        )}
+
+        {!loading && loadError === null && filtered.length === 0 && (
+          <div style={{ padding: "40px 20px", textAlign: "center", color: DS.textSecondary, fontSize: 13 }}>No users found</div>
+        )}
+
+        {!loading &&
+          loadError === null &&
+          filtered.map((u, i) => {
+            const initial = u.displayName.slice(0, 1) || "•";
+            return (
+              <div
+                key={u.id}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1.5fr 1fr 80px 110px 110px 90px 100px",
+                  alignItems: "center",
+                  padding: "13px 20px",
+                  borderBottom: i < filtered.length - 1 ? `1px solid ${DS.bgDarkest}` : "none",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: "50%",
+                      background: DS.accentGradient,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 12,
+                      fontWeight: 800,
+                      color: DS.neutralDark,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {initial}
+                  </div>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: DS.textPrimary }}>{u.displayName}</span>
                 </div>
-                <span style={{ fontSize: 13, fontWeight: 700, color: DS.textPrimary }}>{u.displayName}</span>
+                <span style={{ fontSize: 12, color: DS.textSecondary, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.email}</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: DS.accentGray, textTransform: "uppercase", letterSpacing: "0.04em" }}>{u.authProvider.toUpperCase()}</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: DS.textPrimary, fontFamily: "'DM Mono', monospace" }}>${u.balance.toLocaleString()}</span>
+                <span style={{ fontSize: 13, color: DS.textSecondary, fontFamily: "'DM Mono', monospace" }}>${u.reserved.toLocaleString()}</span>
+                <span style={{ fontSize: 13, color: DS.textSecondary, fontFamily: "'DM Mono', monospace" }}>{u.trades}</span>
+                <span style={{ fontSize: 12, color: DS.textSecondary }}>{u.createdAt}</span>
               </div>
-              <span style={{ fontSize: 12, color: DS.textSecondary, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.email}</span>
-              <span style={{ fontSize: 11, fontWeight: 600, color: DS.accentGray, textTransform: "uppercase", letterSpacing: "0.04em" }}>{u.authProvider}</span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: DS.textPrimary, fontFamily: "'DM Mono', monospace" }}>${u.balance.toLocaleString()}</span>
-              <span style={{ fontSize: 13, color: DS.textSecondary, fontFamily: "'DM Mono', monospace" }}>${u.reserved.toLocaleString()}</span>
-              <span style={{ fontSize: 13, color: DS.textSecondary, fontFamily: "'DM Mono', monospace" }}>{u.trades}</span>
-              <span style={{ fontSize: 12, color: DS.textSecondary }}>{u.createdAt}</span>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </div>
   );
@@ -1333,12 +1649,10 @@ function SettingsPage() {
   );
 }
 
-function ResolveModal(props: { marketId: string; onClose: () => void }) {
-  const market = MOCK_MARKETS.find((m) => m.id === props.marketId);
+function ResolveModal(props: { market: Market; onClose: () => void }) {
+  const market = props.market;
   const [outcome, setOutcome] = useState<"YES" | "NO" | "">("YES");
   const [done, setDone] = useState<boolean>(false);
-
-  if (!market) return null;
 
   return (
     <div
@@ -1476,9 +1790,31 @@ function ResolveModal(props: { marketId: string; onClose: () => void }) {
 
 export function AdminDashboard() {
   const [view, setView] = useState<View>("overview");
-  const [resolveId, setResolveId] = useState<string | null>(null);
+  const [resolveMarket, setResolveMarket] = useState<Market | null>(null);
+  const [marketsCount, setMarketsCount] = useState<number | null>(null);
+  const [editMarketId, setEditMarketId] = useState<string | null>(null);
 
-  const navigate = (v: View) => setView(v);
+  const goToView = (v: View) => {
+    if (v !== "create-market") {
+      setEditMarketId(null);
+    }
+    setView(v);
+  };
+
+  const goToCreateFresh = () => {
+    setEditMarketId(null);
+    setView("create-market");
+  };
+
+  const goToEditMarket = (id: string) => {
+    setEditMarketId(id);
+    setView("create-market");
+  };
+
+  const cancelEdit = () => {
+    setEditMarketId(null);
+    setView("markets");
+  };
 
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", background: DS.bgDarkest, minHeight: "100vh", display: "flex", color: DS.textPrimary }}>
@@ -1539,7 +1875,13 @@ export function AdminDashboard() {
               <button
                 key={item.id}
                 type="button"
-                onClick={() => navigate(item.id)}
+                onClick={() => {
+                  if (item.id === "create-market") {
+                    goToCreateFresh();
+                  } else {
+                    goToView(item.id);
+                  }
+                }}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -1570,7 +1912,7 @@ export function AdminDashboard() {
                       borderRadius: 20,
                     }}
                   >
-                    {MOCK_MARKETS.length}
+                    {marketsCount ?? "—"}
                   </span>
                 )}
               </button>
@@ -1607,9 +1949,25 @@ export function AdminDashboard() {
 
       {/* ── MAIN ────────────────────────────────────────────────────────── */}
       <main style={{ flex: 1, padding: "32px 36px", overflowY: "auto", minHeight: "100vh" }}>
-        {view === "overview" && <OverviewPage onNavigate={navigate} />}
-        {view === "markets" && <MarketsPage onNavigate={navigate} onResolve={setResolveId} />}
-        {view === "create-market" && <CreateMarketPage onCreated={() => navigate("markets")} />}
+        {view === "overview" && <OverviewPage onNavigate={goToView} />}
+        {view === "markets" && (
+          <MarketsPage
+            onResolve={setResolveMarket}
+            onMarketsLoaded={setMarketsCount}
+            onGoToCreateMarket={goToCreateFresh}
+            onEditMarket={goToEditMarket}
+          />
+        )}
+        {view === "create-market" && (
+          <CreateMarketPage
+            editMarketId={editMarketId}
+            onCreated={() => {
+              setEditMarketId(null);
+              goToView("markets");
+            }}
+            onCancelEdit={cancelEdit}
+          />
+        )}
         {view === "users" && <UsersPage />}
         {view === "trades" && <TradesPage />}
         {view === "ledger" && <LedgerPage />}
@@ -1617,7 +1975,7 @@ export function AdminDashboard() {
       </main>
 
       {/* ── RESOLVE MODAL ───────────────────────────────────────────────── */}
-      {resolveId && <ResolveModal marketId={resolveId} onClose={() => setResolveId(null)} />}
+      {resolveMarket !== null && <ResolveModal market={resolveMarket} onClose={() => setResolveMarket(null)} />}
     </div>
   );
 }

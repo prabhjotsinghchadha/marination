@@ -11,11 +11,6 @@ type EventMarketProps = {
 
 type EventTab = "comments" | "activity";
 
-// Figma assets for the "Buy Pop Up" node (limited time CDN URLs).
-const imgDrake = "https://www.figma.com/api/mcp/asset/59814101-ba0f-4d36-8b28-beaad0d92f57";
-const imgKendrick = "https://www.figma.com/api/mcp/asset/9c3681b6-def0-4f2e-9a54-ba94bb588a82";
-const imgLine26 = "https://www.figma.com/api/mcp/asset/a7b1a422-c807-447e-8bdc-20718532c1ee";
-
 const accentDarkGray = "#171717";
 const presetBorder = "#444";
 const mutedLight = "#a1a1aa";
@@ -369,22 +364,16 @@ export function EventMarket(props: EventMarketProps) {
             >
               <div className="px-4 pt-3">
                 <div className="flex items-start gap-3">
-                  <div className="relative h-[66px] w-[80px] shrink-0">
-                    <div className="absolute left-0 top-0 h-[66px] w-[40px] overflow-hidden rounded-tr-[8px] rounded-br-[8px]">
-                      <img
-                        src={imgDrake}
-                        alt=""
-                        className="absolute inset-0 h-full w-full object-cover pointer-events-none"
-                        style={{ transform: "scaleY(-1) rotate(180deg)" }}
+                  <div className="flex shrink-0 gap-1.5">
+                    {props.event.options.slice(0, 2).map(option => (
+                      <Avatar
+                        key={option.id}
+                        label={option.avatarLabel}
+                        startColor={option.avatarStartColor}
+                        endColor={option.avatarEndColor}
+                        size={36}
                       />
-                    </div>
-                    <div className="absolute right-0 top-0 h-[66px] w-[40px] overflow-hidden rounded-tr-[8px] rounded-br-[8px]">
-                      <img
-                        src={imgKendrick}
-                        alt=""
-                        className="absolute inset-0 h-full w-full object-cover pointer-events-none"
-                      />
-                    </div>
+                    ))}
                   </div>
 
                   <p className="pt-[6px] text-[16px] font-semibold leading-[21px] tracking-[-0.31px]" style={{ color: DS.textPrimary }}>
@@ -395,9 +384,9 @@ export function EventMarket(props: EventMarketProps) {
 
               <div className="mt-4 px-4">
                 <div className="flex gap-3">
-                  {props.event.options.map(option => {
+                  {props.event.options.map((option, index) => {
                     const isSelected = selectedOptionId === option.id;
-                    const isDrake = option.id === "drake";
+                    const isYesSide = index === 0;
 
                     return (
                       <button
@@ -406,9 +395,9 @@ export function EventMarket(props: EventMarketProps) {
                         onClick={() => setSelectedOptionId(option.id)}
                         className="h-[42px] flex-1 rounded-[8px] border px-2 text-center text-[13px] font-semibold leading-[18px] tracking-[-0.08px]"
                         style={{
-                          borderColor: isDrake ? DS.success : DS.error,
-                          color: isDrake ? DS.success : DS.error,
-                          background: isSelected ? (isDrake ? DS.successBg : DS.dangerBg) : "transparent",
+                          borderColor: isYesSide ? DS.success : DS.error,
+                          color: isYesSide ? DS.success : DS.error,
+                          background: isSelected ? (isYesSide ? DS.successBg : DS.dangerBg) : "transparent",
                           cursor: "pointer",
                         }}
                       >
@@ -449,7 +438,7 @@ export function EventMarket(props: EventMarketProps) {
                 </div>
               </div>
 
-              <img src={imgLine26} alt="" className="mt-4 h-px w-full object-cover" />
+              <div className="mt-4 h-px w-full" style={{ backgroundColor: accentDarkGray }} />
 
               <div className="px-4 pb-4 pt-3">
                 <div className="flex items-center justify-between">

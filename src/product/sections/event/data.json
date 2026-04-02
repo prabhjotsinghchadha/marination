@@ -15,7 +15,7 @@
       "prohibitions": "Users with direct reporting access to unreleased source data may not trade this market before public publication.",
       "options": [
         {
-          "id": "drake",
+          "id": "yes",
           "name": "Drake",
           "probability": 55,
           "yesPriceCents": 55,
@@ -25,7 +25,7 @@
           "avatarEndColor": "#FFD16F"
         },
         {
-          "id": "kendrick",
+          "id": "no",
           "name": "Kendrick",
           "probability": 45,
           "yesPriceCents": 45,
@@ -41,13 +41,13 @@
         "volumeLabel": "$188,185,564 volume",
         "series": [
           {
-            "id": "drake",
+            "id": "yes",
             "label": "Drake",
             "color": "#FFAE42",
             "points": [48, 51, 53, 54, 52, 55, 55]
           },
           {
-            "id": "kendrick",
+            "id": "no",
             "label": "Kendrick Lamar",
             "color": "#F2F2F7",
             "points": [52, 49, 47, 46, 48, 45, 45]

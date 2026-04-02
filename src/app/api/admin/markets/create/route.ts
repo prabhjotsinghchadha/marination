@@ -6,9 +6,8 @@ import * as z from "zod";
 import { db } from "@/libs/DB";
 import { syncClerkUserFromClerkUser } from "@/libs/ClerkUserSync";
 import { createMarket, getMarketAtomicState } from "@/libs/amm";
+import { buildEventDetailsFromCreateRequest } from "@/libs/marketEventDetails";
 import { assets, marketCpmmBinaryState, marketEvents, marketOutcomes, markets, users } from "@/models/Schema";
-
-import type { EventDetails } from "@/product/sections/event/types";
 
 const EVENT_TYPE_MARKET_CREATED = "MARKET_CREATED";
 
@@ -32,79 +31,6 @@ const CreateMarketRequestSchema = z.object({
 });
 
 type CreateMarketRequestBody = z.infer<typeof CreateMarketRequestSchema>;
-
-function buildEventDetailsFromCreateRequest(props: {
-  slug: string;
-  question: string;
-  description: string | null | undefined;
-  endTime: string;
-  initialLiquidity: number;
-  yesLabel: string;
-  noLabel: string;
-}): EventDetails {
-  // The Event screen expects a full `EventDetails` object.
-  const endDate = new Date(props.endTime);
-  const endTimeText = Number.isNaN(endDate.getTime()) ? "end time" : endDate.toUTCString();
-
-  const yesProbability = 50;
-  const noProbability = 50;
-  const yesPriceCents = 50;
-  const noPriceCents = 50;
-
-  return {
-    slug: props.slug,
-    category: "Music prediction market",
-    title: props.question,
-    summary: props.description ?? props.question,
-    notes: props.description ?? "",
-    rules: [],
-    timelineAndPayout: `The market closes at ${endTimeText}. Winning "${props.yesLabel}" settles at $1.00 and losing "${props.noLabel}" settles at $0.00.`,
-    prohibitions: "",
-    options: [
-      {
-        id: "drake",
-        name: props.yesLabel,
-        probability: yesProbability,
-        yesPriceCents,
-        noPriceCents,
-        avatarLabel: "YES",
-        avatarStartColor: "#F7941D",
-        avatarEndColor: "#FFD16F",
-      },
-      {
-        id: "kendrick",
-        name: props.noLabel,
-        probability: noProbability,
-        yesPriceCents: yesPriceCents,
-        noPriceCents: noPriceCents,
-        avatarLabel: "NO",
-        avatarStartColor: "#6D28D9",
-        avatarEndColor: "#C4B5FD",
-      },
-    ],
-    chart: {
-      labels: ["D-6", "D-5", "D-4", "D-3", "D-2", "D-1", "D-0"],
-      yTicks: [60, 50, 40, 30, 20],
-      volumeLabel: `$${props.initialLiquidity.toFixed(0)} liquidity`,
-      series: [
-        {
-          id: "drake",
-          label: props.yesLabel,
-          color: "#FFAE42",
-          points: [50, 50, 50, 50, 50, 50, 50],
-        },
-        {
-          id: "kendrick",
-          label: props.noLabel,
-          color: "#F2F2F7",
-          points: [50, 50, 50, 50, 50, 50, 50],
-        },
-      ],
-    },
-    relatedMarkets: [],
-    comments: [],
-  };
-}
 
 export const POST = async (request: Request) => {
   const json = await request.json();

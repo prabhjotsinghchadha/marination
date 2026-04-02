@@ -27,7 +27,7 @@ export interface AdminMarket {
   resolvedOutcome?: AdminResolvedOutcome;
 }
 
-export type AdminAuthProvider = "google" | "twitter" | "apple";
+export type AdminAuthProvider = "google" | "twitter" | "apple" | "clerk";
 
 export interface AdminUser {
   id: string;
