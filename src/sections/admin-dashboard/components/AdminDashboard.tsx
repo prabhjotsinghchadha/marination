@@ -601,6 +601,7 @@ function CreateMarketPage(props: { onCreated: () => void }) {
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [createError, setCreateError] = useState<string | null>(null);
+  const [createdRef, setCreatedRef] = useState<{ marketId: string; slug: string } | null>(null);
 
   const setField = <K extends keyof CreateMarketForm>(key: K, value: CreateMarketForm[K]) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -639,10 +640,19 @@ function CreateMarketPage(props: { onCreated: () => void }) {
         }),
       });
 
+      const json = (await res.json().catch(() => null)) as
+        | { message?: string; marketId?: string; slug?: string }
+        | null;
+
       if (!res.ok) {
-        const json = await res.json().catch(() => null);
         const message = json?.message ?? "Failed to create market";
         throw new Error(message);
+      }
+
+      if (json?.marketId && json?.slug) {
+        setCreatedRef({ marketId: json.marketId, slug: json.slug });
+      } else {
+        setCreatedRef(null);
       }
 
       setSubmitted(true);
@@ -676,6 +686,22 @@ function CreateMarketPage(props: { onCreated: () => void }) {
         <p style={{ color: DS.textSecondary, fontSize: 13, textAlign: "center", maxWidth: 340 }}>
           Your market has been saved as a draft. Publish it from the Markets page when ready.
         </p>
+        {createdRef && (
+          <p
+            style={{
+              color: DS.accentGray,
+              fontSize: 11,
+              textAlign: "center",
+              maxWidth: 420,
+              fontFamily: "'DM Mono', monospace",
+              lineHeight: 1.5,
+            }}
+          >
+            Neon row: <span style={{ color: DS.textSecondary }}>{createdRef.marketId}</span>
+            <br />
+            slug: <span style={{ color: DS.textSecondary }}>{createdRef.slug}</span>
+          </p>
+        )}
         <button
           type="button"
           onClick={props.onCreated}
