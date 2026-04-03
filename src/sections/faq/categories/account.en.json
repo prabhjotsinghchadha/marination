@@ -1,0 +1,27 @@
+{
+  "id": "account",
+  "label": "Account & safety",
+  "icon": "🔐",
+  "questions": [
+    {
+      "q": "How do I reset my password?",
+      "a": "Click \"Forgot password\" on the login page and enter your registered email address. You'll receive a reset link within a few minutes. If you don't see it, check your spam folder."
+    },
+    {
+      "q": "Can I have multiple accounts?",
+      "a": "No. Each user is permitted one account on MariNation. Operating multiple accounts is a violation of our Terms of Use and may result in permanent suspension of all associated accounts."
+    },
+    {
+      "q": "How does MariNation protect against fraud?",
+      "a": "We use automated fraud detection, identity verification on withdrawal requests, and manual review for suspicious activity. If you notice unauthorized access to your account, contact support immediately at support@marinationmusic.com."
+    },
+    {
+      "q": "Can I close my account?",
+      "a": "Yes. You can request account closure from your settings page or by contacting support. Any remaining balance will be refunded to your linked payment method before closure."
+    },
+    {
+      "q": "Does MariNation support responsible gambling features?",
+      "a": "Yes. You can set daily, weekly, or monthly deposit limits from your account settings at any time. We also support self-exclusion options for users who need a break. Your wellbeing matters to us."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": "markets",
+  "label": "Marchés & règles",
+  "icon": "📊",
+  "questions": [
+    {
+      "q": "Que se passe-t-il si un marché ne peut pas être résolu ?",
+      "a": "Si les données manquent, sont contestées ou l’événement est annulé, le marché est annulé et tous les montants sont remboursés intégralement."
+    },
+    {
+      "q": "Les marchés sont-ils mutuellement exclusifs ?",
+      "a": "La plupart des duels le sont — une seule issue correcte. C’est indiqué dans le résumé des règles du marché."
+    },
+    {
+      "q": "Combien de temps un marché reste-t-il ouvert ?",
+      "a": "Cela varie : certaines fenêtres durent 24 heures, d’autres une semaine ou plus (par ex. premières 72 h de streaming d’un album). L’heure de clôture est affichée sur chaque page."
+    },
+    {
+      "q": "Qui définit les critères de résolution ?",
+      "a": "Notre équipe les fixe avant l’ouverture, à partir de sources publiques et vérifiables. Ils sont figés à l’ouverture et ne changent pas après le début des paris."
+    },
+    {
+      "q": "Puis-je parier sur les deux côtés ?",
+      "a": "Oui (couverture), mais cela limite souvent le gain potentiel. Chaque côté est traité comme une prédiction indépendante."
+    }
+  ]
+}

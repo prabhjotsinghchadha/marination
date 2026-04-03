@@ -1,0 +1,31 @@
+{
+  "id": "money",
+  "label": "Money & payouts",
+  "icon": "💸",
+  "questions": [
+    {
+      "q": "How do I deposit funds?",
+      "a": "Click \"Deposit\" from any page in the app. We accept major credit and debit cards, as well as ACH bank transfers. Deposits are processed instantly for cards and within 1–3 business days for ACH."
+    },
+    {
+      "q": "How do I withdraw my earnings?",
+      "a": "Go to your account settings and select \"Withdraw.\" Enter your desired amount and your linked bank account or debit card details. Withdrawals are typically processed within 3–5 business days."
+    },
+    {
+      "q": "Is there a minimum withdrawal amount?",
+      "a": "Yes, the minimum withdrawal is $10. There are no fees on withdrawals, and you can withdraw up to your full available balance at any time."
+    },
+    {
+      "q": "When do I receive my payout after a market resolves?",
+      "a": "Winnings are credited to your MariNation balance immediately once a market officially resolves. You'll receive an in-app notification as soon as your balance is updated."
+    },
+    {
+      "q": "Are my earnings taxable?",
+      "a": "Yes. MariNation is required to issue tax documentation (Form 1099) to U.S. users who earn $600 or more in a calendar year. We recommend consulting a tax professional for advice specific to your situation. MariNation is not a licensed tax advisor."
+    },
+    {
+      "q": "Is my financial information secure?",
+      "a": "Absolutely. MariNation uses bank-level 256-bit SSL encryption and partners with PCI-DSS compliant payment processors. Your card and banking details are never stored on MariNation servers directly."
+    }
+  ]
+}

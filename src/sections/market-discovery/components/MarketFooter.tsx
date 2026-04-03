@@ -1,8 +1,73 @@
 "use client";
 
+import type { ChangeEventHandler } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { DS } from "@/product/design-system/colors";
-import { Link } from "@/libs/I18nNavigation";
+import { Link, usePathname, useRouter } from "@/libs/I18nNavigation";
+import { routing } from "@/libs/I18nRouting";
 import Image from "next/image";
+
+/**
+ * Footer language selector: switches locale while preserving path and query string.
+ */
+function MarketFooterLanguageSelect() {
+  const t = useTranslations("MarketFooter");
+  const tLocale = useTranslations("LocaleSwitcher");
+  const router = useRouter();
+  const pathname = usePathname();
+  const locale = useLocale();
+
+  const handleChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
+    const newLocale = event.target.value;
+    if (newLocale === locale) {
+      return;
+    }
+    const { search } = window.location;
+    router.push(`${pathname}${search}`, { locale: newLocale, scroll: false });
+  };
+
+  const localeLabel = (code: string) => (code === "fr" ? t("locale_fr") : t("locale_en"));
+
+  return (
+    <div className="market-footer-link-column market-footer-language">
+      <p
+        className="market-footer-section-heading"
+        style={{
+          fontSize: 12,
+          fontWeight: 700,
+          color: DS.textPrimary,
+          marginBottom: 18,
+        }}
+      >
+        {t("language_heading")}
+      </p>
+      <select
+        value={locale}
+        onChange={handleChange}
+        aria-label={tLocale("change_language")}
+        className="w-full max-w-[200px] cursor-pointer rounded-lg border px-3 py-2 text-[12px] outline-none transition-[border-color,box-shadow] focus-visible:ring-2"
+        style={{
+          background: DS.bgDarkest,
+          borderColor: DS.bgSurface,
+          color: DS.textPrimary,
+          boxShadow: "none",
+        }}
+        onFocus={(event) => {
+          event.currentTarget.style.borderColor = DS.accentDarker;
+        }}
+        onBlur={(event) => {
+          event.currentTarget.style.borderColor = DS.bgSurface;
+        }}
+      >
+        {routing.locales.map((code) => (
+          <option key={code} value={code}>
+            {localeLabel(code)}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
 
 export function MarketFooter() {
   const companyLinks = [
@@ -21,7 +86,7 @@ export function MarketFooter() {
 
   const productLinks = [
     { label: "Help Center", href: "/help-center" },
-    { label: "FAQ", href: "#" },
+    { label: "FAQ", href: "/faq" },
     { label: "Rewards Program", href: "#" },
     { label: "Press", href: "#" },
   ] as const;
@@ -288,6 +353,7 @@ export function MarketFooter() {
           </div>
         </div>
 
+        <MarketFooterLanguageSelect />
       </div>
 
       {/* Bottom bar */}
@@ -407,6 +473,12 @@ export function MarketFooter() {
             border-top: 1px solid #202020;
           }
 
+          .market-footer-language {
+            grid-column: 1 / -1;
+            padding-top: 18px;
+            border-top: 1px solid #202020;
+          }
+
           .market-footer-legal-wrap {
             padding: 0 16px 28px !important;
           }
@@ -415,6 +487,14 @@ export function MarketFooter() {
             text-align: left !important;
             font-size: 11px !important;
             line-height: 1.65 !important;
+          }
+        }
+
+        @media (min-width: 640px) and (max-width: 1023px) {
+          .market-footer-language {
+            grid-column: 1 / -1;
+            padding-top: 18px;
+            border-top: 1px solid #202020;
           }
         }
 
@@ -427,8 +507,13 @@ export function MarketFooter() {
 
         @media (min-width: 1024px) {
           .market-footer-main-grid {
-            grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(180px, 1fr)) !important;
+            grid-template-columns: minmax(200px, 1fr) repeat(4, minmax(140px, 1fr)) !important;
             gap: 52px !important;
+          }
+
+          .market-footer-language {
+            border-top: none !important;
+            padding-top: 0 !important;
           }
 
           .market-footer-bottom-bar {

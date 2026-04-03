@@ -1,0 +1,27 @@
+{
+  "id": "markets",
+  "label": "Markets & rules",
+  "icon": "📊",
+  "questions": [
+    {
+      "q": "What happens if a market can't be resolved?",
+      "a": "In rare cases where the resolution data is unavailable, disputed, or the event is cancelled, the market is voided and all participants are fully refunded their prediction amounts with no deductions."
+    },
+    {
+      "q": "Are markets mutually exclusive?",
+      "a": "Most head-to-head markets are mutually exclusive — only one outcome can resolve as correct. This is always clearly stated in the market's Rule Summary before you predict."
+    },
+    {
+      "q": "How long do markets stay open?",
+      "a": "Market duration varies. Some are live for 24 hours, others span a week or longer depending on the event (e.g., an album's first 72-hour streaming window). The exact close time is shown on every market page."
+    },
+    {
+      "q": "Who decides the resolution criteria?",
+      "a": "Our team defines the resolution criteria for each market before it opens, based on publicly available and independently verifiable data sources. The criteria is locked at market open and cannot be changed after predictions begin."
+    },
+    {
+      "q": "Can I predict on both sides of a market?",
+      "a": "Yes, you can place predictions on both outcomes of a market (hedging), though this is generally not recommended as it limits potential upside. Each side of a market is treated as an independent prediction."
+    }
+  ]
+}

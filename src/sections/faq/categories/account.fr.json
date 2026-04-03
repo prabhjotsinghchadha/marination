@@ -1,0 +1,27 @@
+{
+  "id": "account",
+  "label": "Compte & sécurité",
+  "icon": "🔐",
+  "questions": [
+    {
+      "q": "Comment réinitialiser mon mot de passe ?",
+      "a": "Sur la page de connexion, utilisez « Mot de passe oublié » et votre e-mail. Un lien arrive en quelques minutes ; vérifiez les courriers indésirables."
+    },
+    {
+      "q": "Puis-je avoir plusieurs comptes ?",
+      "a": "Non — un seul compte par utilisateur. Les comptes multiples violent nos conditions d’utilisation et peuvent entraîner une suspension définitive."
+    },
+    {
+      "q": "Comment MariNation lutte contre la fraude ?",
+      "a": "Détection automatisée, vérification d’identité aux retraits, examen manuel des cas suspects. En cas d’accès non autorisé, contactez immédiatement support@marinationmusic.com."
+    },
+    {
+      "q": "Puis-je fermer mon compte ?",
+      "a": "Oui, via les paramètres ou le support. Le solde restant est remboursé sur le moyen de paiement lié avant clôture."
+    },
+    {
+      "q": "Existe-t-il des outils de jeu responsable ?",
+      "a": "Oui : plafonds de dépôt quotidiens, hebdomadaires ou mensuels, et options d’auto-exclusion. Votre bien-être compte pour nous."
+    }
+  ]
+}

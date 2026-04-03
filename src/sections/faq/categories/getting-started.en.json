@@ -1,0 +1,27 @@
+{
+  "id": "getting_started",
+  "label": "Getting started",
+  "icon": "🚀",
+  "questions": [
+    {
+      "q": "What is MariNation?",
+      "a": "MariNation is a music prediction platform that lets you earn real money by predicting music trends — artist battles, streaming milestones, chart positions, and more. If you can spot a rising artist before the world catches on, MariNation finally rewards that instinct."
+    },
+    {
+      "q": "How do I create an account?",
+      "a": "Creating an account is fast and free. Click \"Sign up,\" enter your email address, choose a username and password, and verify your email. You'll be predicting your first market within 60 seconds."
+    },
+    {
+      "q": "Is MariNation free to join?",
+      "a": "Yes — creating an account and browsing markets is completely free. You only need to deposit funds when you're ready to place a real-money prediction."
+    },
+    {
+      "q": "What age do I need to be to use MariNation?",
+      "a": "You must be at least 18 years old (or the legal age of majority in your jurisdiction) to participate in real-money predictions on MariNation."
+    },
+    {
+      "q": "Is MariNation available in my country?",
+      "a": "MariNation is currently available in the United States. We are actively working to expand to additional regions. Check our website or follow us on social media for updates on new market availability."
+    }
+  ]
+}

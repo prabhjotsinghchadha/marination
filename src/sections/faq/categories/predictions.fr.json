@@ -1,0 +1,31 @@
+{
+  "id": "predictions",
+  "label": "Faire des prédictions",
+  "icon": "🎯",
+  "questions": [
+    {
+      "q": "Comment fonctionnent les prédictions ?",
+      "a": "Chaque marché pose une question sur un résultat musical — par exemple : « Qui aura le plus de streams dans les prochaines 24 heures : Drake ou Kendrick ? » Vous choisissez un camp, le montant, et validez. Si votre prédiction est correcte à la résolution, le gain suit les cotes au moment où vous avez parié."
+    },
+    {
+      "q": "Quels types de marchés existent ?",
+      "a": "MariNation propose des duels d’artistes, des jalons de streaming, des positions dans les charts, des courses d’abonnés sur les réseaux, des performances autour de tournées et de sorties d’albums, et plus encore. De nouveaux marchés sont ajoutés régulièrement selon l’actualité musicale."
+    },
+    {
+      "q": "Comment les cotes sont-elles calculées ?",
+      "a": "Les cotes reflètent la répartition des paris sur chaque marché. Plus un côté est populaire, plus le gain potentiel pour ce côté baisse (et augmente pour l’autre). Les cotes se mettent à jour en temps réel."
+    },
+    {
+      "q": "Puis-je modifier ou annuler une prédiction ?",
+      "a": "Une fois validée, la prédiction est définitive. Vérifiez bien votre choix, le montant et le gain potentiel avant d’envoyer."
+    },
+    {
+      "q": "Quels sont les montants minimum et maximum ?",
+      "a": "Le minimum est de 1 $. Les plafonds varient selon le marché. Les limites exactes sont affichées sur le panneau de prédiction avant validation."
+    },
+    {
+      "q": "Comment un marché est-il résolu ?",
+      "a": "La résolution s’appuie sur des sources officielles et vérifiables — Spotify Charts, YouTube Analytics, Apple Music Charts, Setlist.fm, selon le type de marché. La source est indiquée sur la page du marché avant que vous pariez."
+    }
+  ]
+}

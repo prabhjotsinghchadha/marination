@@ -1,0 +1,23 @@
+{
+  "id": "platform",
+  "label": "Platform & support",
+  "icon": "🛠️",
+  "questions": [
+    {
+      "q": "Is there a MariNation mobile app?",
+      "a": "MariNation is fully optimized for mobile web browsers on iOS and Android. A dedicated native app is on our roadmap — follow us on social media to be the first to know when it launches."
+    },
+    {
+      "q": "How do I report a bug or technical issue?",
+      "a": "You can report bugs by emailing support@marinationmusic.com or using the in-app feedback button. Please include a description of the issue, the device you're using, and any screenshots that might help us reproduce it."
+    },
+    {
+      "q": "How do I contact MariNation support?",
+      "a": "Our support team is available via email at support@marinationmusic.com. We aim to respond to all inquiries within 24–48 business hours. For urgent account or payment issues, please mark your email subject line as \"URGENT.\""
+    },
+    {
+      "q": "Where can I find MariNation's Terms of Use and Privacy Policy?",
+      "a": "Both documents are linked in the footer of every page on MariNation.com. We encourage all users to read them carefully before participating in any markets."
+    }
+  ]
+}

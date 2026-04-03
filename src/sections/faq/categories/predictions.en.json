@@ -1,0 +1,31 @@
+{
+  "id": "predictions",
+  "label": "Making predictions",
+  "icon": "🎯",
+  "questions": [
+    {
+      "q": "How do predictions work?",
+      "a": "Each market is a question about a music outcome — for example, \"Who will get more streams in the next 24 hours: Drake or Kendrick?\" You pick a side (Yes or No / Artist A or Artist B), choose your amount, and submit. If your prediction is correct when the market resolves, you earn a payout based on the odds at the time you placed it."
+    },
+    {
+      "q": "What kinds of markets are available?",
+      "a": "MariNation offers head-to-head artist battles, streaming milestone predictions, chart position outcomes, social media follower growth races, tour and album release performance markets, and more. New markets are added regularly based on what's trending in the music world."
+    },
+    {
+      "q": "How are the odds calculated?",
+      "a": "Odds are set based on the overall distribution of predictions in each market. The more people who predict one side, the lower the payout for that side (and the higher for the other). Odds update in real time as new predictions come in."
+    },
+    {
+      "q": "Can I change or cancel my prediction after submitting?",
+      "a": "Predictions are final once submitted. We recommend reviewing your selection, amount, and the potential reward carefully before clicking Submit."
+    },
+    {
+      "q": "What is the minimum and maximum prediction amount?",
+      "a": "The minimum prediction is $1. Maximum amounts may vary by market. High-volume markets may have higher caps. The exact limits are displayed on each market's prediction panel before you submit."
+    },
+    {
+      "q": "How are markets resolved?",
+      "a": "Markets resolve based on official, publicly verifiable data sources — including Spotify Charts, YouTube Analytics, Apple Music Charts, and Setlist.fm, depending on the market type. The resolution source is always disclosed on the market page before you predict."
+    }
+  ]
+}

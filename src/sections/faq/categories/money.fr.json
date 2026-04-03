@@ -1,0 +1,31 @@
+{
+  "id": "money",
+  "label": "Argent & paiements",
+  "icon": "💸",
+  "questions": [
+    {
+      "q": "Comment déposer des fonds ?",
+      "a": "Cliquez sur « Dépôt » depuis l’application. Nous acceptons les cartes bancaires principales et les virements ACH. Les cartes sont généralement instantanées ; l’ACH prend 1 à 3 jours ouvrés."
+    },
+    {
+      "q": "Comment retirer mes gains ?",
+      "a": "Dans les paramètres du compte, choisissez « Retrait », indiquez le montant et le compte ou la carte liés. Les délais sont en général de 3 à 5 jours ouvrés."
+    },
+    {
+      "q": "Y a-t-il un minimum de retrait ?",
+      "a": "Oui, le minimum est de 10 $. Aucun frais de retrait ; vous pouvez retirer jusqu’au solde disponible."
+    },
+    {
+      "q": "Quand suis-je payé après la résolution ?",
+      "a": "Les gains sont crédités sur votre solde MariNation dès que le marché est officiellement résolu. Vous recevez une notification dans l’app."
+    },
+    {
+      "q": "Mes gains sont-ils imposables ?",
+      "a": "Oui. MariNation doit fournir une documentation fiscale (formulaire 1099) aux utilisateurs américains qui gagnent 600 $ ou plus sur une année civile. Consultez un professionnel pour votre situation. MariNation ne fournit pas de conseil fiscal."
+    },
+    {
+      "q": "Mes données financières sont-elles sécurisées ?",
+      "a": "Oui. Chiffrement SSL 256 bits et processeurs de paiement conformes PCI-DSS. Vos coordonnées bancaires ne sont pas stockées directement sur nos serveurs."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "platform",
+  "label": "Plateforme & support",
+  "icon": "🛠️",
+  "questions": [
+    {
+      "q": "Existe-t-il une application mobile MariNation ?",
+      "a": "MariNation est optimisé pour le navigateur mobile iOS et Android. Une application native est prévue — suivez-nous sur les réseaux sociaux pour les annonces."
+    },
+    {
+      "q": "Comment signaler un bug ?",
+      "a": "Écrivez à support@marinationmusic.com ou utilisez le bouton de retour dans l’app. Indiquez le problème, l’appareil et des captures si possible."
+    },
+    {
+      "q": "Comment contacter le support ?",
+      "a": "Par e-mail : support@marinationmusic.com. Réponse visée sous 24 à 48 heures ouvrées. Pour les urgences de compte ou de paiement, indiquez « URGENT » dans l’objet."
+    },
+    {
+      "q": "Où trouver les conditions d’utilisation et la politique de confidentialité ?",
+      "a": "Les deux documents sont accessibles depuis le pied de page de chaque page. Nous vous encourageons à les lire avant de participer aux marchés."
+    }
+  ]
+}
