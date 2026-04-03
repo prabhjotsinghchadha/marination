@@ -7,6 +7,7 @@ export const DS = {
   accentPrimary: "#FFAE42",
   accentDarker: "#F7941D",
   accentMedium: "#FFD16F",
+  accentMediumAlt: "#C48C42",
   accentLightest: "#FFF6EA",
   accentGradient: "linear-gradient(90deg, #eb6a00, #ffa807)",
   accentGray: "#767676",
@@ -14,6 +15,7 @@ export const DS = {
 
   textPrimary: "#F2F2F7",
   textSecondary: "#8F9098",
+  textMuted: "#A1A1AA",
   neutralDark: "#1F2024",
   neutralMid: "#71727A",
 
