@@ -16,11 +16,12 @@
         font-family: "Space Mono", monospace;
         background-color: #080b10;
         color: #c8d4e0;
-        overflow-x: hidden;
     }
 
     body {
         min-height: 100vh;
+        /* Horizontal clip lives on body so position:sticky works (overflow on html breaks it). */
+        overflow-x: hidden;
     }
 }
 

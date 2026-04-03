@@ -409,7 +409,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                     )}
                 </div>
 
-                <div className="hidden lg:flex w-56 shrink-0 flex-col gap-3 sticky top-[98px]">
+                <div className="hidden lg:flex w-56 shrink-0 flex-col gap-3">
                     <BreakingNewsSidebar items={breakingNews} />
                     <HotTopicsSidebar topics={hotTopics} />
                     {showSignUpCta ? <SignUpCTA /> : null}
