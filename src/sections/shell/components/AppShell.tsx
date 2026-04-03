@@ -108,7 +108,7 @@ export function AppShell(props: AppShellProps) {
           </div>
         )}
 
-        <div className={`flex items-center gap-2 shrink-0 ${showHeaderSearch ? "" : "ml-auto"}`}>
+        <div className="flex items-center gap-2 shrink-0 ml-auto">
           {walletBalance !== undefined && (
             <div
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border"
@@ -137,7 +137,7 @@ export function AppShell(props: AppShellProps) {
           )}
 
           <div className="hidden md:block">
-            <ClerkUserMenu />
+            <ClerkUserMenu onNavigate={() => setMobileOpen(false)} />
           </div>
 
           <button
@@ -186,7 +186,7 @@ export function AppShell(props: AppShellProps) {
                   </div>
                 )}
                 <div className="ml-auto">
-                  <ClerkUserMenu />
+                  <ClerkUserMenu onNavigate={() => setMobileOpen(false)} />
                 </div>
             </div>
           </div>

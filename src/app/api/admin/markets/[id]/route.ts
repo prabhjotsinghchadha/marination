@@ -4,21 +4,54 @@ import * as z from "zod";
 
 import { requireStaffApi } from "@/libs/adminStaff";
 import { db } from "@/libs/DB";
-import { buildEventDetailsFromCreateRequest } from "@/libs/marketEventDetails";
+import { buildEventDetailsFromCreateRequest, normalizeOptionalImageUrl } from "@/libs/marketEventDetails";
 import { marketCpmmBinaryState, marketEvents, marketOutcomes, markets } from "@/models/Schema";
+
+import type { EventDetails, EventVisualMode } from "@/product/sections/event/types";
 
 const EVENT_TYPE_MARKET_CREATED = "MARKET_CREATED";
 const USDC_DECIMALS = 6;
 
-const UpdateDraftSchema = z.object({
-  question: z.string().min(1),
-  description: z.string().optional().nullable(),
-  slug: z.string().min(1),
-  startTime: z.string().optional().nullable(),
-  endTime: z.string().min(1),
-  yesLabel: z.string().min(1),
-  noLabel: z.string().min(1),
-});
+const UpdateDraftSchema = z
+  .object({
+    question: z.string().min(1),
+    description: z.string().optional().nullable(),
+    slug: z.string().min(1),
+    startTime: z.string().optional().nullable(),
+    endTime: z.string().min(1),
+    yesLabel: z.string().min(1),
+    noLabel: z.string().min(1),
+    visualMode: z.enum(["single", "comparison"]),
+    heroImageUrl: z.string().max(2048).optional().nullable(),
+    yesImageUrl: z.string().max(2048).optional().nullable(),
+    noImageUrl: z.string().max(2048).optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.visualMode === "single") {
+      if (!normalizeOptionalImageUrl(data.heroImageUrl)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Valid https hero image URL is required for single-proposition markets",
+          path: ["heroImageUrl"],
+        });
+      }
+    } else {
+      if (!normalizeOptionalImageUrl(data.yesImageUrl)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Valid https YES image URL is required for head-to-head markets",
+          path: ["yesImageUrl"],
+        });
+      }
+      if (!normalizeOptionalImageUrl(data.noImageUrl)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Valid https NO image URL is required for head-to-head markets",
+          path: ["noImageUrl"],
+        });
+      }
+    }
+  });
 
 function atomicPoolsToInitialLiquidityUsd(yesPool: bigint | null | undefined, noPool: bigint | null | undefined): number {
   const y = yesPool ?? BigInt(0);
@@ -73,6 +106,35 @@ export const GET = async (_request: Request, context: { params: Promise<{ id: st
 
   const initialLiquidity = atomicPoolsToInitialLiquidityUsd(cpmm?.yesPoolAmount, cpmm?.noPoolAmount);
 
+  const [evRow] = await db
+    .select({ payload: marketEvents.payload })
+    .from(marketEvents)
+    .where(and(eq(marketEvents.marketId, id), eq(marketEvents.eventType, EVENT_TYPE_MARKET_CREATED)))
+    .orderBy(asc(marketEvents.createdAt))
+    .limit(1);
+
+  let yesImageUrl = "";
+  let noImageUrl = "";
+  let visualMode: EventVisualMode = "single";
+  let heroImageUrl = "";
+  if (evRow?.payload != null && typeof evRow.payload === "object") {
+    const payload = evRow.payload as EventDetails;
+    const yesOpt = payload.options?.find((o) => o.id === "yes");
+    const noOpt = payload.options?.find((o) => o.id === "no");
+    yesImageUrl = yesOpt?.imageUrl ?? "";
+    noImageUrl = noOpt?.imageUrl ?? "";
+    heroImageUrl = payload.heroImageUrl ?? "";
+    if (payload.visualMode === "single" || payload.visualMode === "comparison") {
+      visualMode = payload.visualMode;
+    } else if (payload.heroImageUrl) {
+      visualMode = "single";
+    } else if (yesOpt?.imageUrl && noOpt?.imageUrl) {
+      visualMode = "comparison";
+    } else {
+      visualMode = "single";
+    }
+  }
+
   return NextResponse.json({
     market: {
       id: row.id,
@@ -86,6 +148,10 @@ export const GET = async (_request: Request, context: { params: Promise<{ id: st
       initialLiquidity,
       yesLabel: yesRow?.label ?? "Yes",
       noLabel: noRow?.label ?? "No",
+      visualMode,
+      heroImageUrl,
+      yesImageUrl,
+      noImageUrl,
     },
   });
 };
@@ -197,6 +263,10 @@ export const PATCH = async (request: Request, context: { params: Promise<{ id: s
     initialLiquidity,
     yesLabel: body.yesLabel,
     noLabel: body.noLabel,
+    visualMode: body.visualMode,
+    heroImageUrl: body.heroImageUrl,
+    yesImageUrl: body.yesImageUrl,
+    noImageUrl: body.noImageUrl,
   });
 
   const [ev] = await db

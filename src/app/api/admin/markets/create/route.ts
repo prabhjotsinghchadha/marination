@@ -5,7 +5,7 @@ import * as z from "zod";
 import { requireStaffApi } from "@/libs/adminStaff";
 import { db } from "@/libs/DB";
 import { createMarket, getMarketAtomicState } from "@/libs/amm";
-import { buildEventDetailsFromCreateRequest } from "@/libs/marketEventDetails";
+import { buildEventDetailsFromCreateRequest, normalizeOptionalImageUrl } from "@/libs/marketEventDetails";
 import { assets, marketCpmmBinaryState, marketEvents, marketOutcomes, markets } from "@/models/Schema";
 
 const EVENT_TYPE_MARKET_CREATED = "MARKET_CREATED";
@@ -27,6 +27,39 @@ const CreateMarketRequestSchema = z.object({
   // UI inputs for human-friendly outcome labels.
   yesLabel: z.string().optional().default("YES"),
   noLabel: z.string().optional().default("NO"),
+
+  /** `single` = one hero image; `comparison` = YES + NO artist images. */
+  visualMode: z.enum(["single", "comparison"]),
+  /** Required when `visualMode` is `single`. */
+  heroImageUrl: z.string().max(2048).optional().nullable(),
+  /** Required when `visualMode` is `comparison`. */
+  yesImageUrl: z.string().max(2048).optional().nullable(),
+  noImageUrl: z.string().max(2048).optional().nullable(),
+}).superRefine((data, ctx) => {
+  if (data.visualMode === "single") {
+    if (!normalizeOptionalImageUrl(data.heroImageUrl)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Valid https hero image URL is required for single-proposition markets",
+        path: ["heroImageUrl"],
+      });
+    }
+  } else {
+    if (!normalizeOptionalImageUrl(data.yesImageUrl)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Valid https YES image URL is required for head-to-head markets",
+        path: ["yesImageUrl"],
+      });
+    }
+    if (!normalizeOptionalImageUrl(data.noImageUrl)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Valid https NO image URL is required for head-to-head markets",
+        path: ["noImageUrl"],
+      });
+    }
+  }
 });
 
 type CreateMarketRequestBody = z.infer<typeof CreateMarketRequestSchema>;
@@ -65,6 +98,10 @@ export const POST = async (request: Request) => {
     initialLiquidity: body.initialLiquidity,
     yesLabel: body.yesLabel,
     noLabel: body.noLabel,
+    visualMode: body.visualMode,
+    heroImageUrl: body.heroImageUrl,
+    yesImageUrl: body.yesImageUrl,
+    noImageUrl: body.noImageUrl,
   });
 
   const yesOption = eventDetails.options[0]!;

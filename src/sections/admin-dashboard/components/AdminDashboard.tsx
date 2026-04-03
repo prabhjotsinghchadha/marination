@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { DS as BaseDS } from "@/product/design-system/colors";
 import adminData from "@/product/sections/admin-dashboard/data.json";
 import type {
@@ -387,6 +388,7 @@ function MarketsPage(props: {
   onGoToCreateMarket: () => void;
   onEditMarket: (marketId: string) => void;
 }) {
+  const locale = useLocale();
   const [filter, setFilter] = useState<MarketStatus | "ALL">("ALL");
   const [search, setSearch] = useState<string>("");
   const [markets, setMarkets] = useState<Market[]>([]);
@@ -595,7 +597,20 @@ function MarketsPage(props: {
               <p style={{ fontSize: 13, fontWeight: 600, color: DS.textPrimary, marginBottom: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {m.question}
               </p>
-              <p style={{ fontSize: 11, color: DS.textSecondary, fontFamily: "'DM Mono', monospace" }}>/ {m.slug}</p>
+              <Link
+                href={`/${locale}/event/${encodeURIComponent(m.slug)}`}
+                style={{
+                  fontSize: 11,
+                  color: DS.accentDarker,
+                  fontFamily: "'DM Mono', monospace",
+                  textDecoration: "none",
+                  display: "inline-block",
+                  marginTop: 2,
+                }}
+                className="hover:underline"
+              >
+                / {m.slug}
+              </Link>
             </div>
             <div>
               <StatusBadge status={m.status} />
@@ -680,6 +695,11 @@ type CreateMarketForm = {
   yesLabel: string;
   noLabel: string;
   initialLiquidity: string;
+  /** Single hero vs YES/NO artist tiles on the event page. */
+  visualMode: "single" | "comparison";
+  heroImageUrl: string;
+  yesImageUrl: string;
+  noImageUrl: string;
 };
 
 const DEFAULT_CREATE_FORM: CreateMarketForm = {
@@ -694,6 +714,10 @@ const DEFAULT_CREATE_FORM: CreateMarketForm = {
   yesLabel: "Yes",
   noLabel: "No",
   initialLiquidity: "1000",
+  visualMode: "single",
+  heroImageUrl: "",
+  yesImageUrl: "",
+  noImageUrl: "",
 };
 
 function toDatetimeLocal(iso: string): string {
@@ -757,6 +781,10 @@ function CreateMarketPage(props: {
           initialLiquidity: number;
           yesLabel: string;
           noLabel: string;
+          visualMode?: "single" | "comparison";
+          heroImageUrl?: string;
+          yesImageUrl?: string;
+          noImageUrl?: string;
         };
       } | null;
 
@@ -783,6 +811,10 @@ function CreateMarketPage(props: {
         yesLabel: m.yesLabel,
         noLabel: m.noLabel,
         initialLiquidity: String(m.initialLiquidity),
+        visualMode: m.visualMode ?? "single",
+        heroImageUrl: m.heroImageUrl ?? "",
+        yesImageUrl: m.yesImageUrl ?? "",
+        noImageUrl: m.noImageUrl ?? "",
       });
       setStep(1);
       setEditReady(true);
@@ -814,6 +846,10 @@ function CreateMarketPage(props: {
             endTime: form.endTime,
             yesLabel: form.yesLabel,
             noLabel: form.noLabel,
+            visualMode: form.visualMode,
+            heroImageUrl: form.visualMode === "single" ? form.heroImageUrl.trim() || null : null,
+            yesImageUrl: form.visualMode === "comparison" ? form.yesImageUrl.trim() || null : null,
+            noImageUrl: form.visualMode === "comparison" ? form.noImageUrl.trim() || null : null,
           }),
         });
 
@@ -846,6 +882,10 @@ function CreateMarketPage(props: {
           initialLiquidity: Number(form.initialLiquidity),
           yesLabel: form.yesLabel,
           noLabel: form.noLabel,
+          visualMode: form.visualMode,
+          heroImageUrl: form.visualMode === "single" ? form.heroImageUrl.trim() || null : null,
+          yesImageUrl: form.visualMode === "comparison" ? form.yesImageUrl.trim() || null : null,
+          noImageUrl: form.visualMode === "comparison" ? form.noImageUrl.trim() || null : null,
         }),
       });
 
@@ -1109,6 +1149,72 @@ function CreateMarketPage(props: {
               </div>
             </div>
 
+            <div>
+              <label style={{ ...labelStyle, marginBottom: 10 }}>Event visuals</label>
+              <p style={{ fontSize: 11, color: DS.textSecondary, marginBottom: 12, lineHeight: 1.45 }}>
+                Single proposition: one image beside the title and in the trade card. Head-to-head: separate YES and NO images (e.g. two artists).
+              </p>
+              <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
+                {(
+                  [
+                    { id: "single" as const, label: "Single proposition" },
+                    { id: "comparison" as const, label: "Head-to-head (two sides)" },
+                  ] as const
+                ).map((opt) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setField("visualMode", opt.id)}
+                    style={{
+                      background: form.visualMode === opt.id ? DS.accentGradient : DS.bgDarkest,
+                      color: form.visualMode === opt.id ? DS.neutralDark : DS.textSecondary,
+                      border: `1px solid ${form.visualMode === opt.id ? "transparent" : DS.bgSurface}`,
+                      borderRadius: 8,
+                      padding: "8px 14px",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              {form.visualMode === "single" ? (
+                <div>
+                  <label style={labelStyle}>Hero image URL *</label>
+                  <input
+                    value={form.heroImageUrl}
+                    onChange={(e) => setField("heroImageUrl", e.target.value)}
+                    placeholder="https://…"
+                    style={inputStyle}
+                  />
+                  <p style={{ fontSize: 11, color: DS.textSecondary, marginTop: 6 }}>HTTPS URL shown next to the event title and in the sidebar card.</p>
+                </div>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                  <div>
+                    <label style={{ ...labelStyle, color: DS.success }}>YES image URL *</label>
+                    <input
+                      value={form.yesImageUrl}
+                      onChange={(e) => setField("yesImageUrl", e.target.value)}
+                      placeholder="https://…"
+                      style={{ ...inputStyle, borderColor: DS.successBg }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ ...labelStyle, color: DS.error }}>NO image URL *</label>
+                    <input
+                      value={form.noImageUrl}
+                      onChange={(e) => setField("noImageUrl", e.target.value)}
+                      placeholder="https://…"
+                      style={{ ...inputStyle, borderColor: DS.dangerBg }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               <div>
                 <label style={labelStyle}>Protocol Fee (basis points)</label>
@@ -1217,6 +1323,16 @@ function CreateMarketPage(props: {
               { label: "Initial Liquidity", val: `$${form.initialLiquidity} USDC` },
               { label: "YES Label", val: form.yesLabel },
               { label: "NO Label", val: form.noLabel },
+              {
+                label: "Event visuals",
+                val: form.visualMode === "single" ? "Single proposition" : "Head-to-head",
+              },
+              ...(form.visualMode === "single"
+                ? [{ label: "Hero image", val: form.heroImageUrl.trim() || "—" }]
+                : [
+                    { label: "YES image", val: form.yesImageUrl.trim() || "—" },
+                    { label: "NO image", val: form.noImageUrl.trim() || "—" },
+                  ]),
             ].map((r) => (
               <div
                 key={r.label}

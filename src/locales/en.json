@@ -79,5 +79,18 @@
   },
   "AdminDashboardPage": {
     "sidebar_section_label": "Admin panel"
+  },
+  "UserMenuPage": {
+    "menu_label": "User menu",
+    "my_predictions": "My predictions",
+    "rewards": "Rewards",
+    "account_info": "Account info",
+    "rules": "Rules",
+    "privacy_policy": "Privacy policy",
+    "terms_of_use": "Terms of use",
+    "help_center": "Help center",
+    "log_out": "Log out",
+    "sign_in": "Sign in",
+    "guest": "Guest"
   }
 }

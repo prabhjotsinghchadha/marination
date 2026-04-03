@@ -58,9 +58,7 @@ export interface HotTopic {
 export interface MarketDiscoveryProps {
   markets: Market[];
   categories: string[];
-  filterPills: string[];
   activeCategory: string;
-  activeFilterPill: string;
   searchQuery: string;
   isLoadingMore: boolean;
   hasMore: boolean;
@@ -68,11 +66,12 @@ export interface MarketDiscoveryProps {
   hotTopics: HotTopic[];
   onSearchChange: (query: string) => void;
   onCategoryChange: (category: string) => void;
-  onFilterPillChange: (pill: string) => void;
   onMarketClick: (marketId: string) => void;
   /** outcomeIndex is provided for multi-outcome markets */
   onYesClick: (marketId: string, outcomeIndex?: number) => void;
   onNoClick: (marketId: string, outcomeIndex?: number) => void;
   onLoadMore: () => void;
+  /** When false, sidebar sign-up card is hidden (e.g. for signed-in users). Defaults to true. */
+  showSignUpCta?: boolean;
 }
 

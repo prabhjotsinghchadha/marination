@@ -32,6 +32,30 @@ function buildSeriesPath(points: number[], width: number, height: number, min: n
     .join(" ");
 }
 
+type ResolvedVisual =
+  | { kind: "single"; heroUrl: string }
+  | { kind: "comparison" }
+  | { kind: "none" };
+
+function resolveEventVisualLayout(event: EventDetails): ResolvedVisual {
+  const mode = event.visualMode;
+  if (mode === "single" && event.heroImageUrl) {
+    return { kind: "single", heroUrl: event.heroImageUrl };
+  }
+  if (mode === "comparison") {
+    return { kind: "comparison" };
+  }
+  if (event.heroImageUrl) {
+    return { kind: "single", heroUrl: event.heroImageUrl };
+  }
+  const yes = event.options.find(o => o.id === "yes");
+  const no = event.options.find(o => o.id === "no");
+  if (yes?.imageUrl && no?.imageUrl) {
+    return { kind: "comparison" };
+  }
+  return { kind: "none" };
+}
+
 function Avatar(props: {
   label: string;
   startColor: string;
@@ -57,20 +81,30 @@ function Avatar(props: {
 }
 
 function OptionRow(props: {
+  event: EventDetails;
   option: EventOption;
   selectedOptionId: string | null;
   onSelectYes: (optionId: string) => void;
   onSelectNo: (optionId: string) => void;
 }) {
   const isSelected = props.selectedOptionId === props.option.id;
-
-  return (
-    <div className="flex items-center gap-3 border-b py-3" style={{ borderColor: DS.bgSurface }}>
+  const layout = resolveEventVisualLayout(props.event);
+  const thumb =
+    layout.kind === "single" && layout.heroUrl ? (
+      <img src={layout.heroUrl} alt="" className="h-10 w-10 shrink-0 rounded-full object-cover" />
+    ) : props.option.imageUrl ? (
+      <img src={props.option.imageUrl} alt="" className="h-10 w-10 shrink-0 rounded-full object-cover" />
+    ) : (
       <Avatar
         label={props.option.avatarLabel}
         startColor={props.option.avatarStartColor}
         endColor={props.option.avatarEndColor}
       />
+    );
+
+  return (
+    <div className="flex items-center gap-3 border-b py-3" style={{ borderColor: DS.bgSurface }}>
+      {thumb}
 
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm" style={{ color: DS.textPrimary }}>
@@ -183,16 +217,38 @@ export function EventMarket(props: EventMarketProps) {
   const rewardMultiple = selectedOption ? 1 / (selectedOption.yesPriceCents / 100) : 1;
   const potentialReward = amount > 0 ? (amount * rewardMultiple).toFixed(2) : "100";
 
+  const layout = resolveEventVisualLayout(props.event);
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: DS.bgDarkest, color: DS.textPrimary }}>
       <main className="mx-auto w-full max-w-[1040px] px-4 pb-10 pt-6 sm:px-6">
         <p className="mb-2 text-sm" style={{ color: DS.accentGray }}>
           {props.event.category}
         </p>
-        <h1 className="mb-4 text-2xl font-bold leading-tight sm:text-3xl">{props.event.title}</h1>
-        <p className="mb-5 text-sm leading-6" style={{ color: DS.textSecondary }}>
-          {props.event.summary}
-        </p>
+        {layout.kind === "single" ? (
+          <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start">
+            <div className="shrink-0">
+              <img
+                src={layout.heroUrl}
+                alt=""
+                className="h-20 w-20 rounded-xl object-cover sm:h-[72px] sm:w-[72px]"
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-2xl font-bold leading-tight sm:text-3xl">{props.event.title}</h1>
+              <p className="mt-3 text-sm leading-6" style={{ color: DS.textSecondary }}>
+                {props.event.summary}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <h1 className="mb-4 text-2xl font-bold leading-tight sm:text-3xl">{props.event.title}</h1>
+            <p className="mb-5 text-sm leading-6" style={{ color: DS.textSecondary }}>
+              {props.event.summary}
+            </p>
+          </>
+        )}
 
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
           <div className="flex-1 min-w-0">
@@ -207,6 +263,7 @@ export function EventMarket(props: EventMarketProps) {
               {props.event.options.map(option => (
                 <OptionRow
                   key={option.id}
+                  event={props.event}
                   option={option}
                   selectedOptionId={selectedOptionId}
                   onSelectYes={setSelectedOptionId}
@@ -364,17 +421,37 @@ export function EventMarket(props: EventMarketProps) {
             >
               <div className="px-4 pt-3">
                 <div className="flex items-start gap-3">
-                  <div className="flex shrink-0 gap-1.5">
-                    {props.event.options.slice(0, 2).map(option => (
-                      <Avatar
-                        key={option.id}
-                        label={option.avatarLabel}
-                        startColor={option.avatarStartColor}
-                        endColor={option.avatarEndColor}
-                        size={36}
-                      />
-                    ))}
-                  </div>
+                  {layout.kind === "single" ? (
+                    <div className="h-[66px] w-[80px] shrink-0 overflow-hidden rounded-[10px]">
+                      <img src={layout.heroUrl} alt="" className="h-full w-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="relative h-[66px] w-[80px] shrink-0">
+                      {props.event.options.slice(0, 2).map((option, index) => (
+                        <div
+                          key={option.id}
+                          className={`absolute top-0 h-[66px] w-[40px] overflow-hidden rounded-tr-[8px] rounded-br-[8px] ${index === 0 ? "left-0" : "right-0"}`}
+                        >
+                          {option.imageUrl ? (
+                            <img
+                              src={option.imageUrl}
+                              alt=""
+                              className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+                            />
+                          ) : (
+                            <div
+                              className="flex h-full w-full items-center justify-center text-[10px] font-semibold text-[#121212]"
+                              style={{
+                                background: `linear-gradient(135deg, ${option.avatarStartColor}, ${option.avatarEndColor})`,
+                              }}
+                            >
+                              {option.avatarLabel}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   <p className="pt-[6px] text-[16px] font-semibold leading-[21px] tracking-[-0.31px]" style={{ color: DS.textPrimary }}>
                     {props.event.title}

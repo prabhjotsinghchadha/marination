@@ -58,30 +58,6 @@ function CategoryStrip(props: {
     );
 }
 
-function FilterPills(props: { pills: string[]; active: string; onChange: (pill: string) => void }) {
-    const { pills, active, onChange } = props;
-
-    return (
-        <div className="flex gap-1.5 overflow-x-auto scrollbar-none pb-0.5 mb-3">
-            {pills.map((pill) => (
-                <button
-                    key={pill}
-                    onClick={() => onChange(pill)}
-                    className="shrink-0 px-[10px] py-[3px] text-[11px] font-medium rounded-full border transition-all duration-100"
-                    style={{
-                        background: active === pill ? "rgba(255,174,66,0.16)" : "transparent",
-                        color: active === pill ? DS.accentPrimary : DS.accentGray,
-                        borderColor: active === pill ? DS.accentDarker : DS.bgSurface,
-                        cursor: "pointer",
-                    }}
-                >
-                    {pill}
-                </button>
-            ))}
-        </div>
-    );
-}
-
 function BreakingNewsSidebar(props: { items: MarketDiscoveryProps["breakingNews"] }) {
     const { items } = props;
 
@@ -254,9 +230,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
     const {
         markets,
         categories,
-        filterPills,
         activeCategory,
-        activeFilterPill,
         searchQuery,
         isLoadingMore,
         hasMore,
@@ -264,11 +238,11 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
         hotTopics,
         onSearchChange,
         onCategoryChange,
-        onFilterPillChange,
         onMarketClick,
         onYesClick,
         onNoClick,
         onLoadMore,
+        showSignUpCta = true,
     } = props;
 
     const featuredMarket =
@@ -277,22 +251,12 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
             .sort((a, b) => b.volume - a.volume)[0] ??
         [...markets].sort((a, b) => b.volume - a.volume)[0];
 
-    const showHero =
-        !searchQuery && activeCategory === "All" && activeFilterPill === "All" && featuredMarket;
+    const showHero = !searchQuery && activeCategory === "All" && featuredMarket;
 
     const gridMarkets = applySort(
         markets.filter((market) => {
             if (market.id === featuredMarket?.id && showHero) return false;
             if (activeCategory !== "All" && market.category !== activeCategory) return false;
-            if (activeFilterPill !== "All") {
-                const term = activeFilterPill.toLowerCase();
-                if (
-                    !market.question.toLowerCase().includes(term) &&
-                    !market.artist.toLowerCase().includes(term)
-                ) {
-                    return false;
-                }
-            }
             if (searchQuery) {
                 const query = searchQuery.toLowerCase();
                 return (
@@ -360,12 +324,6 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                         </span>
                     </div>
 
-                    <FilterPills
-                        pills={filterPills}
-                        active={activeFilterPill}
-                        onChange={onFilterPillChange}
-                    />
-
                     {gridMarkets.length > 0 ? (
                         <>
                             <div
@@ -431,11 +389,10 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                                     ? `No results for "${searchQuery}"`
                                     : "No markets in this category"}
                             </p>
-                            {(searchQuery || activeFilterPill !== "All") && (
+                            {searchQuery && (
                                 <button
                                     onClick={() => {
                                         onSearchChange("");
-                                        onFilterPillChange("All");
                                     }}
                                     className="mt-3 px-3.5 py-1.5 text-[11px] font-medium rounded-md transition-opacity hover:opacity-80"
                                     style={{
@@ -455,7 +412,7 @@ export function MarketDiscovery(props: MarketDiscoveryProps) {
                 <div className="hidden lg:flex w-56 shrink-0 flex-col gap-3 sticky top-[98px]">
                     <BreakingNewsSidebar items={breakingNews} />
                     <HotTopicsSidebar topics={hotTopics} />
-                    <SignUpCTA />
+                    {showSignUpCta ? <SignUpCTA /> : null}
                 </div>
             </div>
 

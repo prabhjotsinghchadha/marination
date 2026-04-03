@@ -79,5 +79,18 @@
   },
   "AdminDashboardPage": {
     "sidebar_section_label": "Panneau d'administration"
+  },
+  "UserMenuPage": {
+    "menu_label": "Menu utilisateur",
+    "my_predictions": "Mes prédictions",
+    "rewards": "Récompenses",
+    "account_info": "Informations du compte",
+    "rules": "Règles",
+    "privacy_policy": "Politique de confidentialité",
+    "terms_of_use": "Conditions d'utilisation",
+    "help_center": "Centre d'aide",
+    "log_out": "Se déconnecter",
+    "sign_in": "Se connecter",
+    "guest": "Invité"
   }
 }

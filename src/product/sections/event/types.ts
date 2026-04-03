@@ -7,6 +7,8 @@ export interface EventOption {
   avatarLabel: string;
   avatarStartColor: string;
   avatarEndColor: string;
+  /** Public https URL for outcome art in the event sidebar (optional). */
+  imageUrl?: string;
 }
 
 export interface EventChartSeries {
@@ -39,6 +41,8 @@ export interface EventRelatedMarket {
   category: string;
 }
 
+export type EventVisualMode = "single" | "comparison";
+
 export interface EventDetails {
   slug: string;
   category: string;
@@ -48,6 +52,10 @@ export interface EventDetails {
   rules: string[];
   timelineAndPayout: string;
   prohibitions: string;
+  /** How market art is shown: one hero image vs YES/NO head-to-head tiles. */
+  visualMode?: EventVisualMode;
+  /** Used when `visualMode` is `single` (same URL beside title and in sidebar). */
+  heroImageUrl?: string;
   options: EventOption[];
   chart: EventChart;
   relatedMarkets: EventRelatedMarket[];

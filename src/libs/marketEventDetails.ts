@@ -1,4 +1,24 @@
-import type { EventDetails } from "@/product/sections/event/types";
+import type { EventDetails, EventVisualMode } from "@/product/sections/event/types";
+
+/** Validates and trims an optional public https image URL for event payloads. */
+export function normalizeOptionalImageUrl(raw: string | null | undefined): string | undefined {
+  if (raw == null) {
+    return undefined;
+  }
+  const s = raw.trim();
+  if (s === "") {
+    return undefined;
+  }
+  try {
+    const u = new URL(s);
+    if (u.protocol !== "http:" && u.protocol !== "https:") {
+      return undefined;
+    }
+    return s;
+  } catch {
+    return undefined;
+  }
+}
 
 /**
  * Builds the `EventDetails` payload stored on `market_events` for the public event page.
@@ -11,6 +31,10 @@ export function buildEventDetailsFromCreateRequest(props: {
   initialLiquidity: number;
   yesLabel: string;
   noLabel: string;
+  visualMode: EventVisualMode;
+  heroImageUrl?: string | null;
+  yesImageUrl?: string | null;
+  noImageUrl?: string | null;
 }): EventDetails {
   const endDate = new Date(props.endTime);
   const endTimeText = Number.isNaN(endDate.getTime()) ? "end time" : endDate.toUTCString();
@@ -19,6 +43,12 @@ export function buildEventDetailsFromCreateRequest(props: {
   const noProbability = 50;
   const yesPriceCents = 50;
   const noPriceCents = 50;
+
+  const yesImage = normalizeOptionalImageUrl(props.yesImageUrl);
+  const noImage = normalizeOptionalImageUrl(props.noImageUrl);
+  const hero = normalizeOptionalImageUrl(props.heroImageUrl);
+
+  const isComparison = props.visualMode === "comparison";
 
   return {
     slug: props.slug,
@@ -29,6 +59,8 @@ export function buildEventDetailsFromCreateRequest(props: {
     rules: [],
     timelineAndPayout: `The market closes at ${endTimeText}. Winning "${props.yesLabel}" settles at $1.00 and losing "${props.noLabel}" settles at $0.00.`,
     prohibitions: "",
+    visualMode: props.visualMode,
+    ...(props.visualMode === "single" && hero !== undefined ? { heroImageUrl: hero } : {}),
     options: [
       {
         id: "yes",
@@ -39,6 +71,7 @@ export function buildEventDetailsFromCreateRequest(props: {
         avatarLabel: "YES",
         avatarStartColor: "#F7941D",
         avatarEndColor: "#FFD16F",
+        ...(isComparison && yesImage !== undefined ? { imageUrl: yesImage } : {}),
       },
       {
         id: "no",
@@ -49,6 +82,7 @@ export function buildEventDetailsFromCreateRequest(props: {
         avatarLabel: "NO",
         avatarStartColor: "#6D28D9",
         avatarEndColor: "#C4B5FD",
+        ...(isComparison && noImage !== undefined ? { imageUrl: noImage } : {}),
       },
     ],
     chart: {

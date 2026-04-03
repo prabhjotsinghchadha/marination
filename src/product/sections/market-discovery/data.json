@@ -22,20 +22,6 @@
         "Billboard Top 100"
     ],
 
-    "filterPills": [
-        "All",
-        "Taylor Swift",
-        "Beyoncé",
-        "Drake",
-        "Grammy",
-        "Coachella",
-        "Streaming",
-        "Billboard",
-        "K-pop",
-        "New Releases",
-        "Tours"
-    ],
-
     "sortOptions": [
         { "value": "trending", "label": "Trending" },
         { "value": "volume", "label": "Highest Volume" },

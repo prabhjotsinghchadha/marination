@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import data from "@/product/sections/market-discovery/data.json";
 import type { Market } from "@/product/sections/market-discovery/types";
@@ -20,8 +21,8 @@ const expandedMarkets = [
 ] as Market[];
 
 export function MarketDiscoverySection() {
+  const { isSignedIn, isLoaded } = useAuth();
   const [activeCategory, setActiveCategory] = useState<string>("All");
-  const [activeFilterPill, setActiveFilterPill] = useState<string>("All");
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const {
     searchQuery,
@@ -46,9 +47,7 @@ export function MarketDiscoverySection() {
     <MarketDiscovery
       markets={expandedMarkets}
       categories={data.categories}
-      filterPills={data.filterPills}
       activeCategory={activeCategory}
-      activeFilterPill={activeFilterPill}
       searchQuery={searchQuery}
       isLoadingMore={isLoadingMore}
       hasMore
@@ -56,11 +55,11 @@ export function MarketDiscoverySection() {
       hotTopics={data.hotTopics}
       onSearchChange={setSearchQuery}
       onCategoryChange={setActiveCategory}
-      onFilterPillChange={setActiveFilterPill}
       onMarketClick={(id) => console.log("View market:", id)}
       onYesClick={(id, index) => console.log("YES on market:", id, "outcome:", index)}
       onNoClick={(id, index) => console.log("NO on market:", id, "outcome:", index)}
       onLoadMore={handleLoadMore}
+      showSignUpCta={isLoaded ? !isSignedIn : false}
     />
   );
 }
