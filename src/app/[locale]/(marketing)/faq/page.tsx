@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getFaqPageCategories } from "@/sanity/faq-data";
 import { FaqPageContent } from "@/sections/faq/FaqPage";
 import { MarketFooter } from "@/sections/market-discovery/components/MarketFooter";
 
@@ -23,10 +24,11 @@ export async function generateMetadata(props: FaqPageProps): Promise<Metadata> {
 export default async function FaqPage(props: FaqPageProps) {
   const { locale } = await props.params;
   setRequestLocale(locale);
+  const categories = await getFaqPageCategories(locale);
 
   return (
     <>
-      <FaqPageContent />
+      <FaqPageContent categories={categories} />
       <MarketFooter />
     </>
   );

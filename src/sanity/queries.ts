@@ -68,3 +68,20 @@ export const RELATED_POSTS_QUERY = `
     ${POST_FIELDS}
   }
 `;
+
+/**
+ * Localized FAQ document: one `faqPage` per locale (`en` | `fr`).
+ */
+export const FAQ_PAGE_BY_LOCALE_QUERY = `
+  *[_type == "faqPage" && locale == $locale][0] {
+    "categories": coalesce(categories, [])[] {
+      "id": categoryId,
+      label,
+      icon,
+      "questions": coalesce(items, [])[] {
+        "q": question,
+        "a": answer
+      }
+    }
+  }
+`;

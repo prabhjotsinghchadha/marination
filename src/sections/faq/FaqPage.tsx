@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { DS } from "@/product/design-system/colors";
 import { Link } from "@/libs/I18nNavigation";
-import { getFaqCategories, type FaqCategory } from "@/sections/faq/faqCategories";
+import type { FaqCategory } from "@/sections/faq/faqCategories";
 
 const gradientText: React.CSSProperties = {
   background: DS.accentGradient,
@@ -213,10 +213,9 @@ function CategoryBlock(props: {
 /**
  * Marketing FAQ: search, category filters, accordions, contact strip, and CTA.
  */
-export function FaqPageContent() {
+export function FaqPageContent(props: { categories: FaqCategory[] }) {
+  const { categories } = props;
   const t = useTranslations("FaqPage");
-  const locale = useLocale();
-  const categories = getFaqCategories(locale);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);

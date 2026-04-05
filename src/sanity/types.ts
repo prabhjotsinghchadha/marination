@@ -43,3 +43,13 @@ export type SanityCategoryDoc = {
   slug: string | null;
   color?: string | null;
 };
+
+/** Raw projection for {@link FAQ_PAGE_BY_LOCALE_QUERY} before normalisation. */
+export type SanityFaqPageQuery = {
+  categories: {
+    id: string | null;
+    label: string | null;
+    icon: string | null;
+    questions: { q: string | null; a: string | null }[] | null;
+  }[] | null;
+} | null;
