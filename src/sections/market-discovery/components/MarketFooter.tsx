@@ -7,6 +7,12 @@ import { Link, usePathname, useRouter } from "@/libs/I18nNavigation";
 import { routing } from "@/libs/I18nRouting";
 import Image from "next/image";
 
+const marketFooterSectionHeadingClass =
+  "market-footer-section-heading mb-[18px] text-xs font-bold text-[#F2F2F7] max-sm:mb-3 max-sm:text-[11px] max-sm:uppercase max-sm:tracking-[0.04em] max-sm:!text-[#8F9098]";
+
+const marketFooterLinkColumnClass =
+  "market-footer-link-column max-sm:[&_a]:flex max-sm:[&_a]:min-h-10 max-sm:[&_a]:w-full max-sm:[&_a]:items-center max-sm:[&_a]:!text-[13px] max-sm:[&_a]:leading-[1.3]";
+
 /**
  * Footer language selector: switches locale while preserving path and query string.
  */
@@ -29,16 +35,10 @@ function MarketFooterLanguageSelect() {
   const localeLabel = (code: string) => (code === "fr" ? t("locale_fr") : t("locale_en"));
 
   return (
-    <div className="market-footer-link-column market-footer-language">
-      <p
-        className="market-footer-section-heading"
-        style={{
-          fontSize: 12,
-          fontWeight: 700,
-          color: DS.textPrimary,
-          marginBottom: 18,
-        }}
-      >
+    <div
+      className={`${marketFooterLinkColumnClass} market-footer-language col-span-2 border-t border-[#202020] pt-[18px] lg:col-span-1 lg:border-t-0 lg:pt-0`}
+    >
+      <p className={marketFooterSectionHeadingClass}>
         {t("language_heading")}
       </p>
       <select
@@ -91,6 +91,8 @@ export function MarketFooter() {
     { label: "Press", href: "#" },
   ] as const;
 
+  const linkListClass = "market-footer-link-list flex flex-col gap-3 max-sm:gap-2.5";
+
   return (
     <footer
       style={{
@@ -100,23 +102,10 @@ export function MarketFooter() {
       }}
     >
       {/* Main grid */}
-      <div
-        className="market-footer-main-grid"
-        style={{
-          maxWidth: 1380,
-          margin: "0 auto",
-          padding: "40px 20px 28px",
-          display: "grid",
-          gridTemplateColumns: "1fr",
-          gap: 32,
-        }}
-      >
+      <div className="market-footer-main-grid mx-auto grid w-full max-w-[1380px] grid-cols-2 gap-x-4 gap-y-[22px] px-4 py-7 pb-[22px] sm:gap-10 sm:px-5 sm:py-10 sm:pb-7 lg:grid-cols-[minmax(200px,1fr)_repeat(4,minmax(140px,1fr))] lg:gap-[52px]">
         {/* Brand */}
-        <div
-          className="market-footer-brand"
-          style={{ display: "flex", flexDirection: "column", gap: 10 }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div className="market-footer-brand flex flex-col gap-2.5 max-sm:col-span-2 max-sm:items-center max-sm:border-b max-sm:border-[#202020] max-sm:pb-5 max-sm:text-center">
+          <div className="flex items-center gap-2 max-sm:justify-center">
             <div
               style={{
                 width: 28,
@@ -149,33 +138,20 @@ export function MarketFooter() {
               MariNation
             </span>
           </div>
-          <p
-            style={{
-              fontSize: 11,
-              color: DS.accentGray,
-              lineHeight: 1.6,
-              marginTop: 2,
-            }}
-          >
+          <p className="mt-0.5 text-[11px] leading-relaxed text-[#767676]">
             Predict the music. Win for knowing it.
           </p>
         </div>
 
         {/* Company */}
-        <div className="market-footer-link-column">
+        <div className={marketFooterLinkColumnClass}>
           <p
-            className="market-footer-section-heading"
-            style={{
-              fontSize: 12,
-              fontWeight: 700,
-              color: DS.textPrimary,
-              marginBottom: 18,
-            }}
+            className={marketFooterSectionHeadingClass}
           >
             Company
           </p>
 
-          <div className="market-footer-link-list" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div className={linkListClass}>
             {companyLinks.map((link) => {
               if (link.href.startsWith("/")) {
                 return (
@@ -226,20 +202,12 @@ export function MarketFooter() {
         </div>
 
         {/* Social */}
-        <div className="market-footer-link-column">
-          <p
-            className="market-footer-section-heading"
-            style={{
-              fontSize: 12,
-              fontWeight: 700,
-              color: DS.textPrimary,
-              marginBottom: 18,
-            }}
-          >
+        <div className={marketFooterLinkColumnClass}>
+          <p className={marketFooterSectionHeadingClass}>
             Social
           </p>
 
-          <div className="market-footer-link-list" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div className={linkListClass}>
             {socialLinks.map((link) => {
               if (link.href.startsWith("/")) {
                 return (
@@ -290,20 +258,14 @@ export function MarketFooter() {
         </div>
 
         {/* Product */}
-        <div className="market-footer-link-column market-footer-product">
-          <p
-            className="market-footer-section-heading"
-            style={{
-              fontSize: 12,
-              fontWeight: 700,
-              color: DS.textPrimary,
-              marginBottom: 18,
-            }}
-          >
+        <div
+          className={`${marketFooterLinkColumnClass} market-footer-product max-sm:col-span-2 max-sm:border-t max-sm:border-[#202020] max-sm:pt-[18px]`}
+        >
+          <p className={marketFooterSectionHeadingClass}>
             Product
           </p>
 
-          <div className="market-footer-link-list" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div className={linkListClass}>
             {productLinks.map((link) => {
               if (link.href.startsWith("/")) {
                 return (
@@ -357,21 +319,9 @@ export function MarketFooter() {
       </div>
 
       {/* Bottom bar */}
-      <div
-        className="market-footer-bottom-bar"
-        style={{
-          borderTop: `1px solid ${DS.bgDarkGray}`,
-          maxWidth: 1380,
-          margin: "0 auto",
-          padding: "14px 20px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 10,
-        }}
-      >
+      <div className="market-footer-bottom-bar mx-auto flex max-w-[1380px] flex-col items-center gap-2.5 border-t border-[#202020] px-5 py-[14px] lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center">
         {/* Social icons */}
-        <div className="market-footer-social-icons" style={{ display: "flex", gap: 14 }}>
+        <div className="market-footer-social-icons flex justify-center gap-[14px] lg:justify-start">
           {[
             { ic: "✉️", lb: "Email" },
             { ic: "▶️", lb: "TikTok" },
@@ -408,136 +358,14 @@ export function MarketFooter() {
         </div>
 
         {/* Copyright */}
-        <p style={{ fontSize: 10, color: DS.textSecondary, textAlign: "center" }}>
+        <p className="text-center text-[10px] text-[#8F9098]">
           © 2026 MarinationMusic LLC.
         </p>
       </div>
 
-      <style jsx>{`
-        .market-footer-main-grid {
-          width: 100%;
-        }
-
-        .market-footer-bottom-bar {
-          justify-content: center;
-        }
-
-        .market-footer-social-icons {
-          justify-content: center;
-        }
-
-        @media (max-width: 639px) {
-          .market-footer-main-grid {
-            grid-template-columns: 1fr 1fr !important;
-            column-gap: 16px !important;
-            row-gap: 22px !important;
-            padding: 28px 16px 22px !important;
-          }
-
-          .market-footer-brand {
-            grid-column: 1 / -1;
-            align-items: center;
-            text-align: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #202020;
-          }
-
-          .market-footer-brand > div:first-child {
-            justify-content: center;
-          }
-
-          .market-footer-section-heading {
-            margin-bottom: 12px !important;
-            font-size: 11px !important;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            color: #8f9098 !important;
-          }
-
-          .market-footer-link-list {
-            gap: 10px !important;
-          }
-
-          .market-footer-link-column :global(a) {
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-            width: 100%;
-            font-size: 13px !important;
-            line-height: 1.3;
-          }
-
-          .market-footer-product {
-            grid-column: 1 / -1;
-            padding-top: 18px;
-            border-top: 1px solid #202020;
-          }
-
-          .market-footer-language {
-            grid-column: 1 / -1;
-            padding-top: 18px;
-            border-top: 1px solid #202020;
-          }
-
-          .market-footer-legal-wrap {
-            padding: 0 16px 28px !important;
-          }
-
-          .market-footer-legal-text {
-            text-align: left !important;
-            font-size: 11px !important;
-            line-height: 1.65 !important;
-          }
-        }
-
-        @media (min-width: 640px) and (max-width: 1023px) {
-          .market-footer-language {
-            grid-column: 1 / -1;
-            padding-top: 18px;
-            border-top: 1px solid #202020;
-          }
-        }
-
-        @media (min-width: 640px) {
-          .market-footer-main-grid {
-            grid-template-columns: repeat(2, minmax(180px, 1fr)) !important;
-            gap: 40px !important;
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .market-footer-main-grid {
-            grid-template-columns: minmax(200px, 1fr) repeat(4, minmax(140px, 1fr)) !important;
-            gap: 52px !important;
-          }
-
-          .market-footer-language {
-            border-top: none !important;
-            padding-top: 0 !important;
-          }
-
-          .market-footer-bottom-bar {
-            display: grid !important;
-            grid-template-columns: 1fr auto 1fr !important;
-            align-items: center;
-          }
-
-          .market-footer-social-icons {
-            justify-content: flex-start;
-          }
-        }
-      `}</style>
-
       {/* Legal disclaimer */}
-      <div
-        className="market-footer-legal-wrap"
-        style={{
-          maxWidth: 1380,
-          margin: "0 auto",
-          padding: "0 20px 24px",
-        }}
-      >
-        <p className="market-footer-legal-text" style={{ fontSize: 10, color: DS.textSecondary, lineHeight: 1.7, textAlign: "center" }}>
+      <div className="market-footer-legal-wrap mx-auto max-w-[1380px] px-5 pb-6 max-sm:px-4 max-sm:pb-7">
+        <p className="market-footer-legal-text text-center text-[10px] leading-[1.7] text-[#8F9098] max-sm:text-left max-sm:text-[11px] max-sm:leading-[1.65]">
           Marination is operated by Marination Markets LLC, a Delaware limited liability company and wholly
           owned subsidiary of MarinationMusic LLC. Marination is also a software-based music prediction
           competition platform and is not regulated by the CFTC or any other financial regulatory body.

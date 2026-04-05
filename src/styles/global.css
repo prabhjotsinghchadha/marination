@@ -16,6 +16,8 @@
         font-family: "Space Mono", monospace;
         background-color: #080b10;
         color: #c8d4e0;
+        /* Keeps layout width stable when vertical scrollbar appears or disappears between routes. */
+        scrollbar-gutter: stable;
     }
 
     body {
