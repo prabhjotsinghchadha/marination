@@ -72,7 +72,7 @@ function MarketFooterLanguageSelect() {
 export function MarketFooter() {
   const companyLinks = [
     { label: "About", href: "/about" },
-    { label: "Blog", href: "#" },
+    { label: "Blog", href: "/blog" },
     { label: "Privacy Policy", href: "/privacy-policy" },
     { label: "Terms Of Use", href: "/terms-of-use" },
   ] as const;
